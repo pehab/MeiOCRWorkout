@@ -27,11 +27,11 @@ data class DistanceOption(
      * Play Store release. Semantically this value is now the TOTAL distance of the
      * segment, not a one-way distance.
      */
-    val oneWayMeters: Int,
+    val meters: Int,
     val weight: Int = 1,
     val enabled: Boolean = true
 ) {
-    val totalMeters: Int get() = oneWayMeters
+    val totalMeters: Int get() = meters
     // Display label moved to DistanceOption.label() in UiStrings.kt - it needs
     // stringResource(), so it can't stay a plain property on this data class.
 }
@@ -81,14 +81,14 @@ data class WorkoutRoundRecord(
     /**
      * Legacy persistence-facing name. This stores the round's total segment distance.
      */
-    val distanceOneWayMeters: Int,
+    val distanceMeters: Int,
     val routeLoadName: String?,
     val routeLoadDetail: String?,
     val obstacleName: String?,
     val obstacleDetail: String?,
     val durationMs: Long
 ) {
-    val totalMeters: Int get() = distanceOneWayMeters
+    val totalMeters: Int get() = distanceMeters
 }
 
 data class WorkoutRecord(
