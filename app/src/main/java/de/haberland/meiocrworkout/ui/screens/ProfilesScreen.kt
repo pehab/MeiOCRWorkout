@@ -42,7 +42,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -117,7 +117,7 @@ fun ProfilesScreen(
             }
         }
 
-        TabRow(selectedTabIndex = tab) {
+        PrimaryTabRow(selectedTabIndex = tab) {
             Tab(tab == 0, { tab = 0 }, text = { Text(stringResource(R.string.tab_obstacles)) })
             Tab(tab == 1, { tab = 1 }, text = { Text(stringResource(R.string.tab_route_load)) })
             Tab(tab == 2, { tab = 2 }, text = { Text(stringResource(R.string.tab_distance)) })
