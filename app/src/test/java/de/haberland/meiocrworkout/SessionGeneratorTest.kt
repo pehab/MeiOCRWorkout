@@ -20,6 +20,32 @@ class SessionGeneratorTest {
 
     // --- byRounds ---
 
+
+    @Test
+    fun configuredDistanceRepresentsTotalDistanceWithoutDoubling() {
+        val option = DistanceOption("one-km", 1000, 1)
+        assertEquals(1000, option.totalMeters)
+
+        val round = WorkoutRound(
+            number = 1,
+            distance = option,
+            routeLoad = null,
+            obstacle = WeightedItem("obs", "Obstacle")
+        )
+        assertEquals(1000, round.totalMeters)
+
+        val record = WorkoutRoundRecord(
+            number = 1,
+            distanceOneWayMeters = 1000,
+            routeLoadName = null,
+            routeLoadDetail = null,
+            obstacleName = "Obstacle",
+            obstacleDetail = null,
+            durationMs = 60_000L
+        )
+        assertEquals(1000, record.totalMeters)
+    }
+
     @Test
     fun roundPlanUsesRequestedCount() {
         val plan = SessionGenerator.byRounds(AppRepository.defaultProfile(), 10, Random(1))
