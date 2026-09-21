@@ -65,7 +65,7 @@ fun SummaryScreen(record: WorkoutRecord, onDone: () -> Unit) {
                 Column(Modifier.padding(12.dp)) {
                     Text(stringResource(R.string.round_summary_line, round.number, formatDuration(round.durationMs)), fontWeight = FontWeight.Bold)
                     Text(
-                        buildRoundLine(round.distanceOneWayMeters, round.routeLoadName, round.routeLoadDetail, round.obstacleName, round.obstacleDetail),
+                        buildRoundLine(round.distanceMeters, round.routeLoadName, round.routeLoadDetail, round.obstacleName, round.obstacleDetail),
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
