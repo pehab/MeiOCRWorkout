@@ -75,7 +75,7 @@ abstract class MeiOCRDatabase : RoomDatabase() {
                     MeiOCRDatabase::class.java,
                     "meiocrworkout.db"
                 )
-                    .fallbackToDestructiveMigrationOnDowngrade()
+                    .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
                     .build()
                     .also { INSTANCE = it }
             }
