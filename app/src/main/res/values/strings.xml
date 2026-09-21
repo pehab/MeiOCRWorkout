@@ -94,6 +94,7 @@
     <!-- Workout (immersive, tap-to-advance screen) -->
     <string name="workout_round_of">RUNDE %1$d/%2$d</string>
     <string name="workout_round_open">RUNDE %1$d</string>
+    <string name="workout_total_time_label">GESAMTZEIT</string>
     <string name="workout_time_up">ZEIT ABGELAUFEN</string>
     <string name="workout_time_remaining">noch %1$s</string>
     <string name="workout_distance_label">STRECKE</string>
