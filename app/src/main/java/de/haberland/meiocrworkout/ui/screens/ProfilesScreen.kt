@@ -352,7 +352,7 @@ private fun DistanceEditor(items: List<DistanceOption>, onChange: (List<Distance
                         IconButton(onClick = {
                             val m = newMeters.toIntOrNull()
                             if (m != null && m >= 0) {
-                                onChange(items + DistanceOption(oneWayMeters = m))
+                                onChange(items + DistanceOption(meters = m))
                                 newMeters = ""
                             }
                         }) { Icon(Icons.Default.Add, stringResource(R.string.cd_add)) }
