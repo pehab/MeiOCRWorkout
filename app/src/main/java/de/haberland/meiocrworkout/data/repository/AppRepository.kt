@@ -48,7 +48,7 @@ class AppRepository(context: Context) : WorkoutRepository {
                 distances = relation.distances.sortedBy { it.sortOrder }.map {
                     DistanceOption(
                         id = it.id,
-                        oneWayMeters = it.oneWayMeters,
+                        meters = it.meters,
                         weight = it.weight,
                         enabled = it.enabled
                     )
@@ -93,7 +93,7 @@ class AppRepository(context: Context) : WorkoutRepository {
             rounds = relation.rounds.sortedBy { it.number }.map {
                 WorkoutRoundRecord(
                     number = it.number,
-                    distanceOneWayMeters = it.distanceOneWayMeters,
+                    distanceMeters = it.distanceMeters,
                     routeLoadName = it.routeLoadName,
                     routeLoadDetail = it.routeLoadDetail,
                     obstacleName = it.obstacleName,
@@ -158,7 +158,7 @@ class AppRepository(context: Context) : WorkoutRepository {
                     DistanceEntity(
                         id = item.id,
                         profileId = profile.id,
-                        oneWayMeters = item.oneWayMeters,
+                        meters = item.meters,
                         weight = item.weight.coerceIn(Limits.WEIGHT_MIN, Limits.WEIGHT_MAX),
                         enabled = item.enabled,
                         sortOrder = index
@@ -194,7 +194,7 @@ class AppRepository(context: Context) : WorkoutRepository {
                 WorkoutRoundEntity(
                     workoutId = record.id,
                     number = it.number,
-                    distanceOneWayMeters = it.distanceOneWayMeters,
+                    distanceMeters = it.distanceMeters,
                     routeLoadName = it.routeLoadName,
                     routeLoadDetail = it.routeLoadDetail,
                     obstacleName = it.obstacleName,
@@ -269,7 +269,7 @@ class AppRepository(context: Context) : WorkoutRepository {
 
         fun emptyProfile(name: String) = WorkoutProfile(
             name = name,
-            distances = listOf(DistanceOption(oneWayMeters = 0, weight = 1)),
+            distances = listOf(DistanceOption(meters = 0, weight = 1)),
             routeLoads = listOf(WeightedItem(name = "Keine", weight = 1, isNone = true)),
             obstacles = emptyList()
         )
