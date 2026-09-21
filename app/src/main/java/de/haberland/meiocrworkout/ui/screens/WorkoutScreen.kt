@@ -183,12 +183,11 @@ fun WorkoutScreen(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(stringResource(R.string.workout_distance_label), fontSize = 15.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)
-                    if ((round.distance?.oneWayMeters ?: 0) == 0) {
+                    if ((round.distance?.totalMeters ?: 0) == 0) {
                         Text(stringResource(R.string.workout_direct), fontSize = 62.sp, fontWeight = FontWeight.Black)
                         Text(stringResource(R.string.workout_to_obstacle), fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     } else {
-                        Text("${round.distance!!.oneWayMeters} m", fontSize = 78.sp, lineHeight = 80.sp, fontWeight = FontWeight.Black, textAlign = TextAlign.Center)
-                        Text(stringResource(R.string.workout_there_and_back, round.distance.oneWayMeters), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("${round.distance!!.totalMeters} m", fontSize = 78.sp, lineHeight = 80.sp, fontWeight = FontWeight.Black, textAlign = TextAlign.Center)
                     }
                 }
 
