@@ -66,14 +66,14 @@
     <string name="item_weight">Gewichtung %1$d</string>
     <string name="cd_edit">Bearbeiten</string>
     <string name="cd_delete">Löschen</string>
-    <string name="distance_editor_hint">Einfache Strecke bis zum Wendepunkt. 0 m bedeutet: direkt zum nächsten Hindernis.</string>
-    <string name="label_new_simple_distance">Neue einfache Distanz</string>
+    <string name="distance_editor_hint">Gesamtdistanz des Laufabschnitts. 0 m bedeutet: direkt zum nächsten Hindernis.</string>
+    <string name="label_new_simple_distance">Neue Distanz</string>
     <string name="suffix_m">m</string>
     <string name="cd_add">Hinzufügen</string>
     <string name="distance_meta_direct">Direkter Hinderniswechsel · Gewichtung %1$d</string>
     <string name="distance_meta_loop">Rundenstrecke %1$d m · Gewichtung %2$d</string>
     <string name="distance_label_none">Keine Laufstrecke</string>
-    <string name="distance_label_there_and_back">%1$d m hin + zurück</string>
+    <string name="distance_label_total">%1$d m gesamt</string>
 
     <!-- Historie -->
     <string name="title_history">Historie</string>
@@ -100,8 +100,7 @@
     <string name="workout_distance_label">STRECKE</string>
     <string name="workout_direct">DIREKT</string>
     <string name="workout_to_obstacle">zum Hindernis</string>
-    <string name="workout_there_and_back">HIN  ·  %1$d m ZURÜCK</string>
-    <string name="workout_load_label">STRECKENBELASTUNG</string>
+        <string name="workout_load_label">STRECKENBELASTUNG</string>
     <string name="workout_load_none">KEINE</string>
     <string name="workout_next_obstacle_label">DANACH HINDERNIS</string>
     <string name="workout_obstacle_none">KEINS</string>
@@ -137,7 +136,7 @@
     <string name="target_amrap_minutes">%1$d Minuten</string>
     <string name="target_open">offen</string>
     <string name="round_distance_direct">direkt</string>
-    <string name="round_distance_there_and_back">%1$d m + %1$d m</string>
+    <string name="round_distance_total">%1$d m</string>
     <string name="round_no_load">keine Belastung</string>
     <string name="round_no_obstacle">kein Hindernis</string>
     <string name="round_item_with_detail">%1$s (%2$s)</string>
