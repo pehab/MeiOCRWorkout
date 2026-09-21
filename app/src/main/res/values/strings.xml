@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MeiOCRWorkout</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_train">Trainieren</string>
+    <string name="nav_profiles">Profile</string>
+    <string name="nav_history">Historie</string>
+
+    <!-- Shared across screens: WorkoutMode display names, also used by TrainScreen's
+         mode buttons - one resource per mode instead of two copies that could drift. -->
+    <string name="mode_rounds">Runden</string>
+    <string name="mode_distance">Distanz</string>
+    <string name="mode_amrap_time">AMRAP Zeit</string>
+    <string name="mode_amrap_open">AMRAP offen</string>
+
+    <!-- Trainieren -->
+    <string name="train_subtitle">Profil wählen, Modus wählen, starten.</string>
+    <string name="label_profile">Profil</string>
+    <string name="profile_summary">%1$d Distanzen · %2$d Streckenbelastungen · %3$d Hindernisse</string>
+    <string name="label_training_mode">Trainingsmodus</string>
+    <string name="label_rounds_count">Rundenzahl</string>
+    <string name="label_target_distance">Zielstrecke</string>
+    <string name="suffix_km">km</string>
+    <string name="label_target_time">Vorgegebene Zeit</string>
+    <string name="suffix_minutes">Minuten</string>
+    <string name="label_amrap_open">Offenes AMRAP</string>
+    <string name="amrap_open_description">Keine Zielzeit und keine Rundenzahl. Du trainierst, bis du manuell beendest.</string>
+    <string name="error_invalid_rounds">Bitte eine gültige Rundenzahl eingeben.</string>
+    <string name="error_invalid_distance">Bitte eine gültige Distanz eingeben.</string>
+    <string name="error_distance_must_be_positive">Die Distanz muss größer als 0 sein.</string>
+    <string name="error_invalid_time">Bitte eine gültige Zeit eingeben.</string>
+    <string name="error_no_usable_items">Das Profil enthält keine nutzbaren Einträge.</string>
+    <string name="action_start">START</string>
+    <string name="train_footer_hint">Nach START ist die Trainingsansicht absichtlich gesperrt: Bildschirm antippen = nächste Runde, sonst nur TRAINING BEENDEN.</string>
+
+    <!-- Profile -->
+    <string name="title_profiles">Profile</string>
+    <string name="version_label">v%1$s (%2$d)</string>
+    <string name="action_new">Neu</string>
+    <string name="action_duplicate">Duplizieren</string>
+    <string name="action_rename">Umbenennen</string>
+    <string name="cd_delete_profile">Profil löschen</string>
+    <string name="tab_obstacles">Hindernisse</string>
+    <string name="tab_route_load">Streckenbelastung</string>
+    <string name="tab_distance">Distanz</string>
+    <string name="add_label_obstacle">Neues Hindernis</string>
+    <string name="add_label_route_load">Neue Streckenbelastung</string>
+    <string name="dialog_new_profile_title">Neues Profil</string>
+    <string name="label_profile_name">Profilname</string>
+    <string name="default_new_profile_name">Daheim</string>
+    <string name="dialog_rename_profile_title">Profil umbenennen</string>
+    <string name="dialog_delete_profile_title">Profil löschen?</string>
+    <string name="dialog_delete_profile_text">%1$s wird vollständig gelöscht. Bereits gespeicherte Trainings in der Historie bleiben erhalten.</string>
+    <string name="action_delete_caps">LÖSCHEN</string>
+    <string name="action_cancel_caps">ABBRECHEN</string>
+    <string name="action_ok">OK</string>
+    <string name="label_detail_optional_hint">Detail (optional), z. B. 15 Wdh. / 100 m</string>
+    <string name="action_add_caps">HINZUFÜGEN</string>
+    <string name="action_add_free_turn">Freie Wende / keine Belastung hinzufügen</string>
+    <string name="dialog_edit_item_title">Eintrag bearbeiten</string>
+    <string name="label_name">Name</string>
+    <string name="label_detail_optional">Detail (optional)</string>
+    <string name="action_save_caps">SPEICHERN</string>
+    <string name="label_none_free">Keine / frei</string>
+    <string name="item_weight">Gewichtung %1$d</string>
+    <string name="cd_edit">Bearbeiten</string>
+    <string name="cd_delete">Löschen</string>
+    <string name="distance_editor_hint">Einfache Strecke bis zum Wendepunkt. 0 m bedeutet: direkt zum nächsten Hindernis.</string>
+    <string name="label_new_simple_distance">Neue einfache Distanz</string>
+    <string name="suffix_m">m</string>
+    <string name="cd_add">Hinzufügen</string>
+    <string name="distance_meta_direct">Direkter Hinderniswechsel · Gewichtung %1$d</string>
+    <string name="distance_meta_loop">Rundenstrecke %1$d m · Gewichtung %2$d</string>
+    <string name="distance_label_none">Keine Laufstrecke</string>
+    <string name="distance_label_there_and_back">%1$d m hin + zurück</string>
+
+    <!-- Historie -->
+    <string name="title_history">Historie</string>
+    <string name="history_subtitle">Lokal auf diesem Gerät gespeichert</string>
+    <string name="action_delete_all">Alle löschen</string>
+    <string name="history_empty">Noch keine Trainings gespeichert.</string>
+    <string name="dialog_delete_history_title">Historie löschen?</string>
+    <string name="dialog_delete_history_text">Alle lokal gespeicherten Trainings werden gelöscht. Profile bleiben erhalten.</string>
+    <string name="action_delete_all_caps">ALLES LÖSCHEN</string>
+    <string name="label_aborted">abgebrochen</string>
+    <string name="cd_delete_training">Training löschen</string>
+    <string name="action_hide_details">Details ausblenden</string>
+    <string name="action_show_rounds">Runden anzeigen</string>
+    <string name="history_mode_target_line">%1$s · %2$s</string>
+    <string name="history_stats_line">%1$d Runden · %2$s · %3$s</string>
+    <string name="round_summary_line">Runde %1$d · %2$s</string>
+
+    <!-- Workout (immersive, tap-to-advance screen) -->
+    <string name="workout_round_of">RUNDE %1$d/%2$d</string>
+    <string name="workout_round_open">RUNDE %1$d</string>
+    <string name="workout_time_up">ZEIT ABGELAUFEN</string>
+    <string name="workout_time_remaining">noch %1$s</string>
+    <string name="workout_distance_label">STRECKE</string>
+    <string name="workout_direct">DIREKT</string>
+    <string name="workout_to_obstacle">zum Hindernis</string>
+    <string name="workout_there_and_back">HIN  ·  %1$d m ZURÜCK</string>
+    <string name="workout_load_label">STRECKENBELASTUNG</string>
+    <string name="workout_load_none">KEINE</string>
+    <string name="workout_next_obstacle_label">DANACH HINDERNIS</string>
+    <string name="workout_obstacle_none">KEINS</string>
+    <string name="workout_hint_time_up">RUNDE FERTIG → ANTIPPEN = TRAINING ABSCHLIESSEN</string>
+    <string name="workout_hint_last_round">ANTIPPEN = TRAINING ABSCHLIESSEN</string>
+    <string name="workout_hint_next_round">BILDSCHIRM ANTIPPEN = NÄCHSTE RUNDE</string>
+    <string name="action_finish_training">TRAINING BEENDEN</string>
+    <string name="dialog_finish_title">Training beenden?</string>
+    <string name="dialog_finish_text">Die bereits abgeschlossenen Runden werden in der Historie gespeichert.</string>
+    <string name="action_finish_caps">BEENDEN</string>
+    <string name="action_continue_caps">WEITER</string>
+
+    <!-- Zusammenfassung -->
+    <string name="summary_title_completed">Training geschafft</string>
+    <string name="summary_title_aborted">Training beendet</string>
+    <string name="summary_profile_mode_line">%1$s · %2$s</string>
+    <string name="label_duration">Dauer</string>
+    <string name="label_distance_traveled">Laufstrecke</string>
+    <string name="label_target">Ziel</string>
+    <string name="action_done">FERTIG</string>
+
+    <!-- Play in-app update prompt -->
+    <string name="update_dialog_title">Update bereit</string>
+    <string name="update_dialog_text">Eine neue MeiOCRWorkout-Version wurde heruntergeladen. Jetzt installieren? Die App startet anschließend neu.</string>
+    <string name="action_install_caps">INSTALLIEREN</string>
+    <string name="action_later_caps">SPÄTER</string>
+
+    <!-- Round-generation target label (AppViewModel, resolved via Context.getString
+         because it runs outside Compose and gets persisted into WorkoutRecord -
+         see the comment on targetLabel() in AppViewModel.kt) and round detail line
+         (buildRoundLine() in UiStrings.kt, computed fresh at display time). -->
+    <string name="target_rounds">%1$d Runden</string>
+    <string name="target_amrap_minutes">%1$d Minuten</string>
+    <string name="target_open">offen</string>
+    <string name="round_distance_direct">direkt</string>
+    <string name="round_distance_there_and_back">%1$d m + %1$d m</string>
+    <string name="round_no_load">keine Belastung</string>
+    <string name="round_no_obstacle">kein Hindernis</string>
+    <string name="round_item_with_detail">%1$s (%2$s)</string>
+    <string name="round_line_format">%1$s · %2$s · %3$s</string>
+</resources>

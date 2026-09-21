@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MeiOCRWorkout</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_train">Train</string>
+    <string name="nav_profiles">Profiles</string>
+    <string name="nav_history">History</string>
+
+    <!-- Shared across screens: WorkoutMode display names, also used by TrainScreen's
+         mode buttons. -->
+    <string name="mode_rounds">Rounds</string>
+    <string name="mode_distance">Distance</string>
+    <string name="mode_amrap_time">AMRAP Time</string>
+    <string name="mode_amrap_open">AMRAP open</string>
+
+    <!-- Train -->
+    <string name="train_subtitle">Choose a profile, choose a mode, start.</string>
+    <string name="label_profile">Profile</string>
+    <string name="profile_summary">%1$d distances · %2$d route loads · %3$d obstacles</string>
+    <string name="label_training_mode">Training mode</string>
+    <string name="label_rounds_count">Round count</string>
+    <string name="label_target_distance">Target distance</string>
+    <string name="suffix_km">km</string>
+    <string name="label_target_time">Fixed time</string>
+    <string name="suffix_minutes">minutes</string>
+    <string name="label_amrap_open">Open AMRAP</string>
+    <string name="amrap_open_description">No target time and no round count. You train until you stop manually.</string>
+    <string name="error_invalid_rounds">Please enter a valid round count.</string>
+    <string name="error_invalid_distance">Please enter a valid distance.</string>
+    <string name="error_distance_must_be_positive">The distance must be greater than 0.</string>
+    <string name="error_invalid_time">Please enter a valid time.</string>
+    <string name="error_no_usable_items">This profile has no usable entries.</string>
+    <string name="action_start">START</string>
+    <string name="train_footer_hint">Once you hit START, the workout screen is deliberately locked: tap the screen = next round, otherwise only FINISH TRAINING.</string>
+
+    <!-- Profiles -->
+    <string name="title_profiles">Profiles</string>
+    <string name="version_label">v%1$s (%2$d)</string>
+    <string name="action_new">New</string>
+    <string name="action_duplicate">Duplicate</string>
+    <string name="action_rename">Rename</string>
+    <string name="cd_delete_profile">Delete profile</string>
+    <string name="tab_obstacles">Obstacles</string>
+    <string name="tab_route_load">Route load</string>
+    <string name="tab_distance">Distance</string>
+    <string name="add_label_obstacle">New obstacle</string>
+    <string name="add_label_route_load">New route load</string>
+    <string name="dialog_new_profile_title">New profile</string>
+    <string name="label_profile_name">Profile name</string>
+    <string name="default_new_profile_name">Home</string>
+    <string name="dialog_rename_profile_title">Rename profile</string>
+    <string name="dialog_delete_profile_title">Delete profile?</string>
+    <string name="dialog_delete_profile_text">%1$s will be permanently deleted. Workouts already saved in history are kept.</string>
+    <string name="action_delete_caps">DELETE</string>
+    <string name="action_cancel_caps">CANCEL</string>
+    <string name="action_ok">OK</string>
+    <string name="label_detail_optional_hint">Detail (optional), e.g. 15 reps / 100 m</string>
+    <string name="action_add_caps">ADD</string>
+    <string name="action_add_free_turn">Add free turnaround / no load</string>
+    <string name="dialog_edit_item_title">Edit entry</string>
+    <string name="label_name">Name</string>
+    <string name="label_detail_optional">Detail (optional)</string>
+    <string name="action_save_caps">SAVE</string>
+    <string name="label_none_free">None / free</string>
+    <string name="item_weight">Weight %1$d</string>
+    <string name="cd_edit">Edit</string>
+    <string name="cd_delete">Delete</string>
+    <string name="distance_editor_hint">One-way distance to the turnaround point. 0 m means: straight to the next obstacle.</string>
+    <string name="label_new_simple_distance">New one-way distance</string>
+    <string name="suffix_m">m</string>
+    <string name="cd_add">Add</string>
+    <string name="distance_meta_direct">Direct obstacle transition · Weight %1$d</string>
+    <string name="distance_meta_loop">Round distance %1$d m · Weight %2$d</string>
+    <string name="distance_label_none">No running distance</string>
+    <string name="distance_label_there_and_back">%1$d m there + back</string>
+
+    <!-- History -->
+    <string name="title_history">History</string>
+    <string name="history_subtitle">Saved locally on this device</string>
+    <string name="action_delete_all">Delete all</string>
+    <string name="history_empty">No workouts saved yet.</string>
+    <string name="dialog_delete_history_title">Delete history?</string>
+    <string name="dialog_delete_history_text">All locally saved workouts will be deleted. Profiles are kept.</string>
+    <string name="action_delete_all_caps">DELETE ALL</string>
+    <string name="label_aborted">aborted</string>
+    <string name="cd_delete_training">Delete workout</string>
+    <string name="action_hide_details">Hide details</string>
+    <string name="action_show_rounds">Show rounds</string>
+    <string name="history_mode_target_line">%1$s · %2$s</string>
+    <string name="history_stats_line">%1$d rounds · %2$s · %3$s</string>
+    <string name="round_summary_line">Round %1$d · %2$s</string>
+
+    <!-- Workout (immersive, tap-to-advance screen) -->
+    <string name="workout_round_of">ROUND %1$d/%2$d</string>
+    <string name="workout_round_open">ROUND %1$d</string>
+    <string name="workout_time_up">TIME UP</string>
+    <string name="workout_time_remaining">%1$s left</string>
+    <string name="workout_distance_label">DISTANCE</string>
+    <string name="workout_direct">DIRECT</string>
+    <string name="workout_to_obstacle">to obstacle</string>
+    <string name="workout_there_and_back">THERE  ·  %1$d m BACK</string>
+    <string name="workout_load_label">ROUTE LOAD</string>
+    <string name="workout_load_none">NONE</string>
+    <string name="workout_next_obstacle_label">THEN OBSTACLE</string>
+    <string name="workout_obstacle_none">NONE</string>
+    <string name="workout_hint_time_up">ROUND DONE → TAP = FINISH TRAINING</string>
+    <string name="workout_hint_last_round">TAP = FINISH TRAINING</string>
+    <string name="workout_hint_next_round">TAP SCREEN = NEXT ROUND</string>
+    <string name="action_finish_training">FINISH TRAINING</string>
+    <string name="dialog_finish_title">Finish training?</string>
+    <string name="dialog_finish_text">Rounds already completed will be saved to history.</string>
+    <string name="action_finish_caps">FINISH</string>
+    <string name="action_continue_caps">CONTINUE</string>
+
+    <!-- Summary -->
+    <string name="summary_title_completed">Workout complete</string>
+    <string name="summary_title_aborted">Workout ended</string>
+    <string name="summary_profile_mode_line">%1$s · %2$s</string>
+    <string name="label_duration">Duration</string>
+    <string name="label_distance_traveled">Distance covered</string>
+    <string name="label_target">Target</string>
+    <string name="action_done">DONE</string>
+
+    <!-- Play in-app update prompt -->
+    <string name="update_dialog_title">Update ready</string>
+    <string name="update_dialog_text">A new MeiOCRWorkout version has been downloaded. Install now? The app will restart afterwards.</string>
+    <string name="action_install_caps">INSTALL</string>
+    <string name="action_later_caps">LATER</string>
+
+    <!-- Round-generation target label and round detail line - see the German file's
+         comment for why targetLabel() resolves these via Context.getString(). -->
+    <string name="target_rounds">%1$d rounds</string>
+    <string name="target_amrap_minutes">%1$d minutes</string>
+    <string name="target_open">open</string>
+    <string name="round_distance_direct">direct</string>
+    <string name="round_distance_there_and_back">%1$d m + %1$d m</string>
+    <string name="round_no_load">no load</string>
+    <string name="round_no_obstacle">no obstacle</string>
+    <string name="round_item_with_detail">%1$s (%2$s)</string>
+    <string name="round_line_format">%1$s · %2$s · %3$s</string>
+</resources>

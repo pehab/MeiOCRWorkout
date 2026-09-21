@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- OCR rig -->
+    <path
+        android:fillColor="#B9F36B"
+        android:pathData="M24,27 L84,27 L84,35 L24,35 Z" />
+    <path
+        android:fillColor="#B9F36B"
+        android:pathData="M27,33 L35,33 L35,82 L27,82 Z" />
+    <path
+        android:fillColor="#B9F36B"
+        android:pathData="M73,33 L81,33 L81,82 L73,82 Z" />
+
+    <!-- stylized M / obstacle rhythm -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M35,72 L35,45 L42,45 L54,61 L66,45 L73,45 L73,72 L65,72 L65,57 L54,71 L43,57 L43,72 Z" />
+
+    <!-- motion cut -->
+    <path
+        android:strokeColor="#0E1012"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M44,40 L61,40" />
+</vector>
