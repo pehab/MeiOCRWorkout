@@ -22,11 +22,16 @@ data class WeightedItem(
 
 data class DistanceOption(
     val id: String = UUID.randomUUID().toString(),
+    /**
+     * Legacy property name kept to avoid a Room schema migration before the first
+     * Play Store release. Semantically this value is now the TOTAL distance of the
+     * segment, not a one-way distance.
+     */
     val oneWayMeters: Int,
     val weight: Int = 1,
     val enabled: Boolean = true
 ) {
-    val totalMeters: Int get() = oneWayMeters * 2
+    val totalMeters: Int get() = oneWayMeters
     // Display label moved to DistanceOption.label() in UiStrings.kt - it needs
     // stringResource(), so it can't stay a plain property on this data class.
 }
@@ -73,6 +78,9 @@ data class WorkoutPlan(
 
 data class WorkoutRoundRecord(
     val number: Int,
+    /**
+     * Legacy persistence-facing name. This stores the round's total segment distance.
+     */
     val distanceOneWayMeters: Int,
     val routeLoadName: String?,
     val routeLoadDetail: String?,
@@ -80,7 +88,7 @@ data class WorkoutRoundRecord(
     val obstacleDetail: String?,
     val durationMs: Long
 ) {
-    val totalMeters: Int get() = distanceOneWayMeters * 2
+    val totalMeters: Int get() = distanceOneWayMeters
 }
 
 data class WorkoutRecord(
