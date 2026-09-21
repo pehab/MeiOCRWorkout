@@ -34,10 +34,10 @@ fun WorkoutMode.displayName(): String = stringResource(
 )
 
 @Composable
-fun DistanceOption.label(): String = if (oneWayMeters == 0) {
+fun DistanceOption.label(): String = if (totalMeters == 0) {
     stringResource(R.string.distance_label_none)
 } else {
-    stringResource(R.string.distance_label_there_and_back, oneWayMeters)
+    stringResource(R.string.distance_label_total, totalMeters)
 }
 
 @Composable
@@ -51,7 +51,7 @@ fun buildRoundLine(
     val distance = if (oneWayMeters == 0) {
         stringResource(R.string.round_distance_direct)
     } else {
-        stringResource(R.string.round_distance_there_and_back, oneWayMeters)
+        stringResource(R.string.round_distance_total, oneWayMeters)
     }
     val load = routeName?.let {
         if (routeDetail.isNullOrBlank()) it else stringResource(R.string.round_item_with_detail, it, routeDetail)
