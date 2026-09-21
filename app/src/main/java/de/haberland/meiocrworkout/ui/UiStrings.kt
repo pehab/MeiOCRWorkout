@@ -42,16 +42,16 @@ fun DistanceOption.label(): String = if (totalMeters == 0) {
 
 @Composable
 fun buildRoundLine(
-    oneWayMeters: Int,
+    meters: Int,
     routeName: String?,
     routeDetail: String?,
     obstacleName: String?,
     obstacleDetail: String?
 ): String {
-    val distance = if (oneWayMeters == 0) {
+    val distance = if (meters == 0) {
         stringResource(R.string.round_distance_direct)
     } else {
-        stringResource(R.string.round_distance_total, oneWayMeters)
+        stringResource(R.string.round_distance_total, meters)
     }
     val load = routeName?.let {
         if (routeDetail.isNullOrBlank()) it else stringResource(R.string.round_item_with_detail, it, routeDetail)
