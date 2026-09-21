@@ -36,7 +36,7 @@ class SessionGeneratorTest {
 
         val record = WorkoutRoundRecord(
             number = 1,
-            distanceOneWayMeters = 1000,
+            distanceMeters = 1000,
             routeLoadName = null,
             routeLoadDetail = null,
             obstacleName = "Obstacle",
