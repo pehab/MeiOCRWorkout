@@ -1,5 +1,7 @@
 package de.haberland.meiocrworkout.ui.screens
 
+import de.haberland.meiocrworkout.R
+import de.haberland.meiocrworkout.BuildConfig
 import de.haberland.meiocrworkout.ui.*
 import de.haberland.meiocrworkout.ui.screens.*
 import de.haberland.meiocrworkout.presentation.*
