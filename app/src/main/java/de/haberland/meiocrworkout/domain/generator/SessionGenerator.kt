@@ -16,6 +16,8 @@ import kotlin.random.Random
 
 object SessionGenerator {
 
+    private const val DIRECT_ROUTE_LOAD_FACTOR = 0.25
+
     fun byRounds(profile: WorkoutProfile, count: Int, random: Random = Random.Default): WorkoutPlan {
         require(count > 0)
         require(hasMeaningfulItem(profile)) { "Im Profil ist kein aktives Trainingselement verfügbar." }
@@ -82,8 +84,9 @@ object SessionGenerator {
         }
 
         val count = picked.size
-        val routeSeq = adaptiveNullableSession(
+        val routeSeq = adaptiveRouteLoadSession(
             items = profile.routeLoads,
+            distances = picked,
             count = count,
             random = random,
             coverageWithin = count
@@ -156,7 +159,7 @@ object SessionGenerator {
         coverageWithin: Int
     ): List<WorkoutRound> {
         val distanceSeq = adaptiveDistanceSession(profile.distances, count, random)
-        val routeSeq = adaptiveNullableSession(profile.routeLoads, count, random, coverageWithin)
+        val routeSeq = adaptiveRouteLoadSession(profile.routeLoads, distanceSeq, count, random, coverageWithin)
         val obstacleSeq = adaptiveNullableSession(profile.obstacles, count, random, coverageWithin)
 
         return List(count) { i ->
@@ -288,6 +291,29 @@ object SessionGenerator {
             coverageWithin = null
         )
         return List(count) { index -> picker.pick(index) }
+    }
+
+    /**
+     * Route loads stay possible on a direct (0 m) transition, but are deliberately
+     * uncommon. A direct round usually means obstacle -> obstacle; occasionally a
+     * route load can represent a short hard transition such as a climb between them.
+     *
+     * On 0 m rounds a real route load is kept only 25 % of the time. "Keine" remains
+     * the normal outcome. ensureNotEmpty() still guarantees that a completely empty
+     * round can never survive generation.
+     */
+    private fun adaptiveRouteLoadSession(
+        items: List<WeightedItem>,
+        distances: List<DistanceOption?>,
+        count: Int,
+        random: Random,
+        coverageWithin: Int
+    ): List<WeightedItem?> {
+        val normal = adaptiveNullableSession(items, count, random, coverageWithin)
+        return normal.mapIndexed { index, load ->
+            val isDirect = (distances.getOrNull(index)?.totalMeters ?: 0) == 0
+            if (isDirect && load != null && random.nextDouble() >= DIRECT_ROUTE_LOAD_FACTOR) null else load
+        }
     }
 
     private fun adaptiveNullableSession(
