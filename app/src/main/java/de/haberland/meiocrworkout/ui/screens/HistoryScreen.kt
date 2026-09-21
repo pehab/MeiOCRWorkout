@@ -134,7 +134,7 @@ private fun HistoryCard(record: WorkoutRecord, expanded: Boolean, onToggle: () -
                     Column(Modifier.padding(vertical = 6.dp)) {
                         Text(stringResource(R.string.round_summary_line, round.number, formatDuration(round.durationMs)), fontWeight = FontWeight.Bold)
                         Text(
-                            buildRoundLine(round.distanceOneWayMeters, round.routeLoadName, round.routeLoadDetail, round.obstacleName, round.obstacleDetail),
+                            buildRoundLine(round.distanceMeters, round.routeLoadName, round.routeLoadDetail, round.obstacleName, round.obstacleDetail),
                             fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
