@@ -115,7 +115,7 @@ class AppViewModel(
         val roundRecords = completedRounds.mapIndexed { index, round ->
             WorkoutRoundRecord(
                 number = index + 1,
-                distanceOneWayMeters = round.distance?.oneWayMeters ?: 0,
+                distanceMeters = round.distance?.meters ?: 0,
                 routeLoadName = round.routeLoad?.name,
                 routeLoadDetail = round.routeLoad?.detail,
                 obstacleName = round.obstacle?.name,
