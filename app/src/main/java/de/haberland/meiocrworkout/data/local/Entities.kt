@@ -38,7 +38,7 @@ data class ProfileEntity(
 data class DistanceEntity(
     val id: String,
     val profileId: String,
-    val oneWayMeters: Int,
+    val meters: Int,
     val weight: Int,
     val enabled: Boolean,
     val sortOrder: Int
@@ -98,7 +98,7 @@ data class WorkoutEntity(
 data class WorkoutRoundEntity(
     val workoutId: String,
     val number: Int,
-    val distanceOneWayMeters: Int,
+    val distanceMeters: Int,
     val routeLoadName: String?,
     val routeLoadDetail: String?,
     val obstacleName: String?,
