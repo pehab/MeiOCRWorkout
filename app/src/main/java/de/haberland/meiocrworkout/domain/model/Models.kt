@@ -22,11 +22,7 @@ data class WeightedItem(
 
 data class DistanceOption(
     val id: String = UUID.randomUUID().toString(),
-    /**
-     * Legacy property name kept to avoid a Room schema migration before the first
-     * Play Store release. Semantically this value is now the TOTAL distance of the
-     * segment, not a one-way distance.
-     */
+    /** Total distance of this running segment in meters. */
     val meters: Int,
     val weight: Int = 1,
     val enabled: Boolean = true
@@ -78,9 +74,7 @@ data class WorkoutPlan(
 
 data class WorkoutRoundRecord(
     val number: Int,
-    /**
-     * Legacy persistence-facing name. This stores the round's total segment distance.
-     */
+    /** Total distance completed in this round. */
     val distanceMeters: Int,
     val routeLoadName: String?,
     val routeLoadDetail: String?,
