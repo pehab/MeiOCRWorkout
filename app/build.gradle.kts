@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "de.haberland.meiocrworkout"
-    compileSdk = 37
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "de.haberland.meiocrworkout"
         minSdk = 28
-        targetSdk = 37
+        targetSdk = 36
         versionCode = 7
         versionName = "0.7.0"
 
