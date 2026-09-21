@@ -133,31 +133,48 @@ fun WorkoutScreen(
         ) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text(plan.profileName.uppercase(), fontSize = 12.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Black)
+                    Text(plan.profileName.uppercase(), fontSize = 13.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Black)
                     Text(
                         when (plan.mode) {
                             WorkoutMode.ROUNDS, WorkoutMode.DISTANCE -> stringResource(R.string.workout_round_of, index + 1, plan.rounds.size)
                             WorkoutMode.AMRAP_TIME, WorkoutMode.AMRAP_OPEN -> stringResource(R.string.workout_round_open, index + 1)
                         },
-                        fontSize = 17.sp,
+                        fontSize = 19.sp,
                         fontWeight = FontWeight.Black
                     )
                 }
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(formatDuration(elapsed), fontSize = 17.sp, fontWeight = FontWeight.Bold)
-                    if (plan.mode == WorkoutMode.AMRAP_TIME && targetMs != null) {
-                        val remaining = (targetMs - elapsed).coerceAtLeast(0L)
-                        Text(
-                            if (timeUp) stringResource(R.string.workout_time_up) else stringResource(R.string.workout_time_remaining, formatDuration(remaining)),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = if (timeUp) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+            }
+
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(top = 2.dp, bottom = 2.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    stringResource(R.string.workout_total_time_label),
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.2.sp
+                )
+                Text(
+                    formatDuration(elapsed),
+                    fontSize = 34.sp,
+                    lineHeight = 36.sp,
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                if (plan.mode == WorkoutMode.AMRAP_TIME && targetMs != null) {
+                    val remaining = (targetMs - elapsed).coerceAtLeast(0L)
+                    Text(
+                        if (timeUp) stringResource(R.string.workout_time_up) else stringResource(R.string.workout_time_remaining, formatDuration(remaining)),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (timeUp) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(4.dp))
 
             Column(
                 Modifier.weight(1f).fillMaxWidth(),
@@ -165,13 +182,13 @@ fun WorkoutScreen(
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(R.string.workout_distance_label), fontSize = 13.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)
+                    Text(stringResource(R.string.workout_distance_label), fontSize = 15.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)
                     if ((round.distance?.oneWayMeters ?: 0) == 0) {
-                        Text(stringResource(R.string.workout_direct), fontSize = 54.sp, fontWeight = FontWeight.Black)
-                        Text(stringResource(R.string.workout_to_obstacle), fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.workout_direct), fontSize = 62.sp, fontWeight = FontWeight.Black)
+                        Text(stringResource(R.string.workout_to_obstacle), fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     } else {
-                        Text("${round.distance!!.oneWayMeters} m", fontSize = 66.sp, lineHeight = 68.sp, fontWeight = FontWeight.Black, textAlign = TextAlign.Center)
-                        Text(stringResource(R.string.workout_there_and_back, round.distance.oneWayMeters), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("${round.distance!!.oneWayMeters} m", fontSize = 78.sp, lineHeight = 80.sp, fontWeight = FontWeight.Black, textAlign = TextAlign.Center)
+                        Text(stringResource(R.string.workout_there_and_back, round.distance.oneWayMeters), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
 
@@ -180,16 +197,16 @@ fun WorkoutScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(stringResource(R.string.workout_load_label), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.workout_load_label), fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
                         Text(
                             (round.routeLoad?.name ?: stringResource(R.string.workout_load_none)).uppercase(),
-                            fontSize = 30.sp,
-                            lineHeight = 33.sp,
+                            fontSize = 38.sp,
+                            lineHeight = 41.sp,
                             fontWeight = FontWeight.Black,
                             textAlign = TextAlign.Center
                         )
                         round.routeLoad?.detail?.takeIf { it.isNotBlank() }?.let {
-                            Text(it, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+                            Text(it, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
                         }
                     }
                 }
@@ -198,8 +215,8 @@ fun WorkoutScreen(
                     Text(stringResource(R.string.workout_next_obstacle_label), fontSize = 13.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Black, letterSpacing = 1.4.sp)
                     Text(
                         (round.obstacle?.name ?: stringResource(R.string.workout_obstacle_none)).uppercase(),
-                        fontSize = 44.sp,
-                        lineHeight = 46.sp,
+                        fontSize = 52.sp,
+                        lineHeight = 54.sp,
                         fontWeight = FontWeight.Black,
                         textAlign = TextAlign.Center
                     )
