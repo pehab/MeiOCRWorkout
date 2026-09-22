@@ -5,26 +5,25 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- OCR rig -->
-    <path
-        android:fillColor="#B9F36B"
-        android:pathData="M24,27 L84,27 L84,35 L24,35 Z" />
-    <path
-        android:fillColor="#B9F36B"
-        android:pathData="M27,33 L35,33 L35,82 L27,82 Z" />
-    <path
-        android:fillColor="#B9F36B"
-        android:pathData="M73,33 L81,33 L81,82 L73,82 Z" />
+    <!-- warm circular scene -->
+    <path android:fillColor="#FF9F0A" android:pathData="M54,14 A40,40 0,1 1,53.9 14" />
+    <path android:fillColor="#FF6A00" android:pathData="M14,63 C28,54 38,58 49,62 C62,67 73,61 94,54 L94,94 L14,94 Z" />
+    <path android:fillColor="#FFD23F" android:pathData="M74,24 A9,9 0,1 1,73.9 24" />
 
-    <!-- stylized M / obstacle rhythm -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M35,72 L35,45 L42,45 L54,61 L66,45 L73,45 L73,72 L65,72 L65,57 L54,71 L43,57 L43,72 Z" />
+    <!-- mountains / OCR terrain -->
+    <path android:fillColor="#C63E12" android:pathData="M16,66 L29,51 L40,64 L50,48 L66,67 Z" />
+    <path android:fillColor="#A92F10" android:pathData="M57,68 L72,49 L91,69 Z" />
 
-    <!-- motion cut -->
-    <path
-        android:strokeColor="#0E1012"
-        android:strokeWidth="4"
-        android:strokeLineCap="round"
-        android:pathData="M44,40 L61,40" />
+    <!-- hurdle -->
+    <path android:fillColor="#4A1B0D" android:pathData="M45,67 L86,60 L88,66 L47,73 Z" />
+    <path android:fillColor="#FFBE24" android:pathData="M47,64 L85,58 L86,64 L48,70 Z" />
+    <path android:fillColor="#FF8A00" android:pathData="M46,68 L52,68 L52,91 L46,91 Z M82,62 L88,62 L88,86 L82,86 Z" />
+
+    <!-- runner outline -->
+    <path android:fillColor="#3A160C" android:pathData="M54,28 A7,7 0,1 1,53.9 28 M48,36 L58,36 L64,47 L57,54 L64,61 L59,65 L50,56 L45,68 L38,79 L32,75 L39,63 L44,50 L35,46 L26,53 L22,48 L34,38 Z" />
+    <!-- runner -->
+    <path android:fillColor="#FFFDF7" android:pathData="M54,30 A5,5 0,1 1,53.9 30 M48,38 L56,38 L61,47 L55,52 L61,59 L58,62 L49,54 L43,66 L37,77 L34,74 L40,62 L45,49 L36,44 L27,51 L24,48 L35,40 Z" />
+
+    <!-- sparkles -->
+    <path android:fillColor="#FFFFFF" android:pathData="M26,27 L28,32 L33,34 L28,36 L26,41 L24,36 L19,34 L24,32 Z M83,35 L85,39 L89,41 L85,43 L83,47 L81,43 L77,41 L81,39 Z" />
 </vector>
