@@ -40,6 +40,9 @@ dependencies {
 
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.activity:activity-compose:1.13.0")
+    // Play In-App Updates still pulls Fragment APIs transitively; pin a modern
+    // Fragment version so Activity Result APIs are safe and release lint can verify it.
+    implementation("androidx.fragment:fragment-ktx:1.8.9")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0") // viewModelScope, used by AppViewModel
