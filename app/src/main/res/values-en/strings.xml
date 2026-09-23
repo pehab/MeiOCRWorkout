@@ -73,7 +73,6 @@
     <string name="distance_meta_direct">Direct obstacle transition · Weight %1$d</string>
     <string name="distance_meta_loop">Round distance %1$d m · Weight %2$d</string>
     <string name="distance_label_none">No running distance</string>
-    <string name="distance_label_there_and_back">%1$d m there + back</string>
 
     <!-- History -->
     <string name="title_history">History</string>
@@ -99,7 +98,6 @@
     <string name="workout_distance_label">DISTANCE</string>
     <string name="workout_direct">DIRECT</string>
     <string name="workout_to_obstacle">to obstacle</string>
-    <string name="workout_there_and_back">THERE  ·  %1$d m BACK</string>
     <string name="workout_load_label">ROUTE LOAD</string>
     <string name="workout_load_none">NONE</string>
     <string name="workout_next_obstacle_label">THEN OBSTACLE</string>
@@ -134,7 +132,6 @@
     <string name="target_amrap_minutes">%1$d minutes</string>
     <string name="target_open">open</string>
     <string name="round_distance_direct">direct</string>
-    <string name="round_distance_there_and_back">%1$d m + %1$d m</string>
     <string name="round_no_load">no load</string>
     <string name="round_no_obstacle">no obstacle</string>
     <string name="round_item_with_detail">%1$s (%2$s)</string>
