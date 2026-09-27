@@ -5,14 +5,14 @@ MeiOCRWorkout is an Android application for creating and recording personal OCR 
 ## Data collection and use
 MeiOCRWorkout does not use advertising or analytics and does not sell personal data.
 
-Workout profiles, workout configuration, and workout history are stored locally on the user's device.
+Workout profiles, workout configuration, workout history, and optional group-training participant names/colors are stored locally on the user's device.
 
 The application is intended to use Firebase Crashlytics to receive technical crash reports and diagnose app errors. Crash reports may contain technical information such as device and operating-system information, app version and state, stack traces, and diagnostic identifiers. Crashlytics is not used for advertising or analytics.
 
 Google may process technical information required to provide Firebase Crashlytics. For information about Google's handling of data, see Google's privacy policy and Firebase privacy and security documentation.
 
 ## Local data
-Workout profiles and workout history remain on the device. They are not synchronized to a MeiOCRWorkout server or cloud database.
+Workout profiles, workout history, and group-training participant metadata remain on the device. They are not synchronized to a MeiOCRWorkout server or cloud database.
 
 ## Third parties
 MeiOCRWorkout does not contain advertising SDKs and does not use Firebase Analytics or other analytics/tracking services.

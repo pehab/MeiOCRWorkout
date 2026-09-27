@@ -1,4 +1,4 @@
-# MeiOCRWorkout – Alpha MVP 0.7
+# MeiOCRWorkout – Alpha MVP 0.9
 
 Native Android app for configurable OCR workout simulation.
 
@@ -9,7 +9,7 @@ Native Android app for configurable OCR workout simulation.
 - fully offline; no account or backend
 
 
-## Alpha polish in 0.7
+## Alpha features in 0.9
 
 ### Launcher icon
 
@@ -17,7 +17,7 @@ MeiOCRWorkout now ships with its own adaptive launcher icon: a dark OCR-rig fram
 
 ### Version display
 
-The Profile screen shows the current `versionName` and `versionCode` directly from `BuildConfig`. Current alpha: **0.7.0 (7)**.
+The Profile screen shows the current `versionName` and `versionCode` directly from `BuildConfig`. Current alpha: **0.9.0 (9)**.
 
 ### Google Play in-app update foundation
 
@@ -112,13 +112,29 @@ Details:
 - profile/history writes are serialized with a coroutine `Mutex`
 - newest **500 workouts** are retained
 - individual records or all history can be deleted
+- group workouts are stored as one logical session with one history data sheet per participant
+- participant name/color metadata is stored locally with the workout so summary/history tabs can reproduce the group view
 - Room schema export is enabled under `app/schemas` for future migration testing
 
 ### Upgrade from MVP 0.5
 
 Was a one-time JSON-in-SharedPreferences → Room import for existing installs. Removed in 0.7: the app has never shipped, so there was no installed base and nothing left to migrate. `AppRepository.initialize()` now only seeds the default profile on first launch.
 
-Database version is currently **1**. Future schema changes should add explicit Room migrations; production upgrades should not use destructive migration.
+Database version is currently **2**. Version 2 adds optional group-training metadata to workout history and ships with an explicit Room migration from version 1.
+
+## Group training
+
+Group training extends the existing workout modes instead of replacing them. The selected profile, mode and target are generated exactly like a solo workout; only participant start positions and the workout UI change.
+
+- 2–20 participants
+- optional participant names and colors before start
+- a quick-start button allows starting immediately with default participant labels/colors
+- all participants receive the same generated workout sequence, rotated to stagger starting positions and reduce queues at obstacles
+- portrait phones use a wider two-column tile layout; larger screens/tablets use more columns
+- tapping a participant tile advances only that participant and briefly highlights the tile while the full board remains visible
+- each participant's lap times, distance and round details are tracked separately
+- after finishing, the normal summary screen is reused with participant tabs
+- the History view stores the group session as one logical entry and uses the same participant-tab concept
 
 ## Garmin
 
@@ -130,15 +146,15 @@ MeiOCRWorkout stores exact session and round-change timestamps. A later FIT-impo
 
 Open this project in Android Studio and sync Gradle.
 
-- Android Gradle Plugin 9.3.1
+- Android Gradle Plugin 9.2.1
 - Kotlin 2.4.20
 - KSP 2.3.10
 - Room 2.8.5
-- Compose BOM 2026.09.00
-- compile/target SDK 37
+- Compose BOM 2026.06.01
+- compile/target SDK 36
 - min SDK 28
 
-A Gradle wrapper binary is not bundled; Android Studio can generate/use the wrapper.
+The Gradle wrapper is bundled; current wrapper version: 9.5.1.
 
 ## Package-Struktur
 
