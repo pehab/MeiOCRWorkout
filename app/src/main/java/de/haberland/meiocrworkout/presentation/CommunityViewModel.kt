@@ -61,6 +61,15 @@ class CommunityViewModel(
             loading = true
             runCatching {
                 user = repository.signInWithGoogle(activity)
+
+                // The one configured admin account can bootstrap its custom claim
+                // server-side. For every other account this intentionally fails
+                // silently and normal USER permissions remain unchanged.
+                if (user?.role?.canManageModerators != true) {
+                    runCatching { repository.bootstrapAdmin() }
+                        .onSuccess { user = it }
+                }
+
                 ownSubmissions = repository.loadOwnSubmissions()
                 if (user?.role?.canModerate == true) {
                     pendingSubmissions = repository.loadPendingSubmissions()
