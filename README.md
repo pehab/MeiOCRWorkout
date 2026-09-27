@@ -175,6 +175,30 @@ Open this project in Android Studio and sync Gradle.
 
 The Gradle wrapper is bundled; current wrapper version: 9.5.1.
 
+## Stable CI signing
+
+GitHub Actions can sign the downloadable debug APK with one persistent private key instead of the runner's temporary Android debug key. This keeps the APK certificate SHA-1/SHA-256 stable for Firebase/Google OAuth and allows sideloaded updates to be installed over previous CI builds.
+
+The workflow expects these GitHub Actions repository secrets:
+
+- `MEIOCR_SIGNING_KEYSTORE_BASE64` – base64 encoded JKS/keystore file
+- `MEIOCR_SIGNING_STORE_PASSWORD`
+- `MEIOCR_SIGNING_KEY_ALIAS`
+- `MEIOCR_SIGNING_KEY_PASSWORD`
+
+When the secrets are present, `assembleDebug` uses that key. When they are absent (for example on an untrusted pull request), Gradle falls back to Android's normal debug signing so CI can still compile.
+
+The CI log prints the certificate details of the produced APK via `apksigner --print-certs`. Add that stable SHA-1/SHA-256 once to the Firebase Android app `de.haberland.meiocrworkout`.
+
+A local developer can use the same signing setup without committing secrets by adding these entries to `local.properties`:
+
+```properties
+meiocr.signing.storeFile=/absolute/path/to/meiocrworkout.jks
+meiocr.signing.storePassword=...
+meiocr.signing.keyAlias=...
+meiocr.signing.keyPassword=...
+```
+
 ## Package-Struktur
 
 Der Kotlin-Code ist thematisch gegliedert:

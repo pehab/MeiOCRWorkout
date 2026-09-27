@@ -1,3 +1,37 @@
+import java.util.Properties
+
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.isFile) file.inputStream().use(::load)
+}
+
+fun signingValue(propertyName: String, envName: String): String? =
+    localProperties.getProperty(propertyName)?.takeIf { it.isNotBlank() }
+        ?: System.getenv(envName)?.takeIf { it.isNotBlank() }
+
+val meiocrSigningStoreFile = signingValue(
+    "meiocr.signing.storeFile",
+    "MEIOCR_SIGNING_STORE_FILE"
+)?.let(::file)
+val meiocrSigningStorePassword = signingValue(
+    "meiocr.signing.storePassword",
+    "MEIOCR_SIGNING_STORE_PASSWORD"
+)
+val meiocrSigningKeyAlias = signingValue(
+    "meiocr.signing.keyAlias",
+    "MEIOCR_SIGNING_KEY_ALIAS"
+)
+val meiocrSigningKeyPassword = signingValue(
+    "meiocr.signing.keyPassword",
+    "MEIOCR_SIGNING_KEY_PASSWORD"
+) ?: meiocrSigningStorePassword
+
+val hasMeiocrSigning =
+    meiocrSigningStoreFile?.isFile == true &&
+        meiocrSigningStorePassword != null &&
+        meiocrSigningKeyAlias != null &&
+        meiocrSigningKeyPassword != null
+
 plugins {
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
@@ -19,6 +53,25 @@ android {
         versionName = "0.10.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        if (hasMeiocrSigning) {
+            create("meiocrStable") {
+                storeFile = requireNotNull(meiocrSigningStoreFile)
+                storePassword = requireNotNull(meiocrSigningStorePassword)
+                keyAlias = requireNotNull(meiocrSigningKeyAlias)
+                keyPassword = requireNotNull(meiocrSigningKeyPassword)
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            if (hasMeiocrSigning) {
+                signingConfig = signingConfigs.getByName("meiocrStable")
+            }
+        }
     }
 
     buildFeatures {

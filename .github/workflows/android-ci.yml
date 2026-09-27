@@ -42,8 +42,25 @@ jobs:
       - name: Run unit tests
         run: gradle testDebugUnitTest --stacktrace
 
+      - name: Restore stable signing key
+        if: ${{ secrets.MEIOCR_SIGNING_KEYSTORE_BASE64 != '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.MEIOCR_SIGNING_KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/meiocrworkout-ci.jks"
+
       - name: Build debug APK
+        env:
+          MEIOCR_SIGNING_STORE_FILE: ${{ secrets.MEIOCR_SIGNING_KEYSTORE_BASE64 != '' && format('{0}/meiocrworkout-ci.jks', runner.temp) || '' }}
+          MEIOCR_SIGNING_STORE_PASSWORD: ${{ secrets.MEIOCR_SIGNING_STORE_PASSWORD }}
+          MEIOCR_SIGNING_KEY_ALIAS: ${{ secrets.MEIOCR_SIGNING_KEY_ALIAS }}
+          MEIOCR_SIGNING_KEY_PASSWORD: ${{ secrets.MEIOCR_SIGNING_KEY_PASSWORD }}
         run: gradle assembleDebug --stacktrace
+
+      - name: Show APK signing certificate
+        run: |
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs app/build/outputs/apk/debug/app-debug.apk
+
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v7
