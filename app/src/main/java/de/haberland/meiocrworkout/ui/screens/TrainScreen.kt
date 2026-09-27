@@ -50,13 +50,16 @@ fun TrainScreen(
     profiles: List<WorkoutProfile>,
     selectedProfileId: String,
     onProfileSelected: (String) -> Unit,
-    onStart: (WorkoutPlan) -> Unit
+    onStart: (WorkoutPlan) -> Unit,
+    onStartGroup: (GroupWorkoutSession) -> Unit,
 ) {
     var mode by remember { mutableStateOf(WorkoutMode.ROUNDS) }
     var roundsText by remember { mutableStateOf("8") }
     var kmText by remember { mutableStateOf("10") }
     var minutesText by remember { mutableStateOf("60") }
     var profileMenu by remember { mutableStateOf(false) }
+    var groupMode by remember { mutableStateOf(false) }
+    var participantText by remember { mutableStateOf("8") }
     var error by remember { mutableStateOf<String?>(null) }
 
     val profile = profiles.firstOrNull { it.id == selectedProfileId } ?: profiles.first()
@@ -117,6 +120,12 @@ fun TrainScreen(
             Text(stringResource(R.string.label_training_mode), fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(8.dp))
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                ModeButton(
+                    stringResource(R.string.mode_group),
+                    groupMode,
+                    Modifier.fillMaxWidth(),
+                ) { groupMode = !groupMode }
+
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     ModeButton(stringResource(R.string.mode_rounds), mode == WorkoutMode.ROUNDS, Modifier.weight(1f)) { mode = WorkoutMode.ROUNDS }
                     ModeButton(stringResource(R.string.mode_distance), mode == WorkoutMode.DISTANCE, Modifier.weight(1f)) { mode = WorkoutMode.DISTANCE }
@@ -131,7 +140,30 @@ fun TrainScreen(
         item {
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                    when (mode) {
+                    if (groupMode) {
+                        Text(stringResource(R.string.label_group_participants), fontWeight = FontWeight.Bold)
+                        OutlinedTextField(
+                            participantText,
+                            { participantText = it.filter(Char::isDigit).take(2) },
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            singleLine = true,
+                        )
+                        Text(stringResource(R.string.label_target_time), fontWeight = FontWeight.Bold)
+                        OutlinedTextField(
+                            minutesText,
+                            { minutesText = it.filter(Char::isDigit).take(3) },
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            suffix = { Text(stringResource(R.string.suffix_minutes)) },
+                            singleLine = true,
+                        )
+                        Text(
+                            stringResource(R.string.group_setup_hint),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 13.sp,
+                        )
+                    } else when (mode) {
                         WorkoutMode.ROUNDS -> {
                             Text(stringResource(R.string.label_rounds_count), fontWeight = FontWeight.Bold)
                             OutlinedTextField(
@@ -182,7 +214,15 @@ fun TrainScreen(
                         onClick = {
                             error = null
                             runCatching {
-                                when (mode) {
+                                if (groupMode) {
+                                    val participants = participantText.toIntOrNull()
+                                        ?.takeIf { it in 2..20 }
+                                        ?: error(invalidRoundsError)
+                                    val minutes = minutesText.toIntOrNull()
+                                        ?.coerceIn(Limits.AMRAP_MINUTES_MIN, Limits.AMRAP_MINUTES_MAX)
+                                        ?: error(invalidTimeError)
+                                    GroupSessionGenerator.create(profile, participants, minutes)
+                                } else when (mode) {
                                     WorkoutMode.ROUNDS -> {
                                         val count = roundsText.toIntOrNull()
                                             ?.coerceIn(Limits.ROUNDS_MIN, Limits.ROUNDS_MAX)
@@ -204,7 +244,12 @@ fun TrainScreen(
                                     }
                                     WorkoutMode.AMRAP_OPEN -> SessionGenerator.byAmrapOpen(profile)
                                 }
-                            }.onSuccess(onStart).onFailure {
+                            }.onSuccess { generated ->
+                                when (generated) {
+                                    is WorkoutPlan -> onStart(generated)
+                                    is GroupWorkoutSession -> onStartGroup(generated)
+                                }
+                            }.onFailure {
                                 error = it.message ?: noUsableItemsError
                             }
                         },

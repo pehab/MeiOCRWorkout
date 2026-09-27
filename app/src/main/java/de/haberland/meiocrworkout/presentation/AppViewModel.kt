@@ -19,7 +19,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 enum class RootTab { TRAIN, PROFILES, HISTORY }
-enum class AppScreen { ROOT, WORKOUT, SUMMARY }
+enum class AppScreen { ROOT, WORKOUT, GROUP_WORKOUT, SUMMARY }
 
 /**
  * Holds the app's profile/history/navigation state and talks to [WorkoutRepository].
@@ -63,6 +63,8 @@ class AppViewModel(
         private set
     var summaryRecord by mutableStateOf<WorkoutRecord?>(null)
         private set
+    var groupSession by mutableStateOf<GroupWorkoutSession?>(null)
+        private set
 
     init {
         viewModelScope.launch {
@@ -103,6 +105,17 @@ class AppViewModel(
     fun startWorkout(generatedPlan: WorkoutPlan) {
         plan = generatedPlan
         appScreen = AppScreen.WORKOUT
+    }
+
+    fun startGroupWorkout(session: GroupWorkoutSession) {
+        groupSession = session
+        appScreen = AppScreen.GROUP_WORKOUT
+    }
+
+    fun finishGroupWorkout() {
+        groupSession = null
+        appScreen = AppScreen.ROOT
+        rootTab = RootTab.TRAIN
     }
 
     fun cancelWorkoutWithoutRounds() {

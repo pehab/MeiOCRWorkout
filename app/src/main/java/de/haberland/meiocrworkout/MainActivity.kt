@@ -200,7 +200,8 @@ fun MeiOCRWorkoutApp(
                                 profiles = viewModel.profiles,
                                 selectedProfileId = selectedProfile.id,
                                 onProfileSelected = viewModel::selectProfile,
-                                onStart = viewModel::startWorkout
+                                onStart = viewModel::startWorkout,
+                                onStartGroup = viewModel::startGroupWorkout
                             )
 
                             RootTab.PROFILES -> ProfilesScreen(
@@ -219,6 +220,13 @@ fun MeiOCRWorkoutApp(
                     }
                 )
 
+                AppScreen.GROUP_WORKOUT -> viewModel.groupSession?.let { session ->
+                    GroupWorkoutScreen(
+                        session = session,
+                        onFinish = viewModel::finishGroupWorkout
+                    )
+                }
+
                 AppScreen.WORKOUT -> viewModel.plan?.let { activePlan ->
                     WorkoutScreen(
                         plan = activePlan,
@@ -233,7 +241,7 @@ fun MeiOCRWorkoutApp(
             }
         }
 
-        if (updateReadyToInstall && viewModel.appScreen != AppScreen.WORKOUT && !updatePromptDismissed) {
+        if (updateReadyToInstall && viewModel.appScreen != AppScreen.WORKOUT && viewModel.appScreen != AppScreen.GROUP_WORKOUT && !updatePromptDismissed) {
             AlertDialog(
                 onDismissRequest = { updatePromptDismissed = true },
                 title = { Text(stringResource(R.string.update_dialog_title)) },

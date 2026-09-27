@@ -13,6 +13,7 @@
     <string name="mode_distance">Distanz</string>
     <string name="mode_amrap_time">AMRAP Zeit</string>
     <string name="mode_amrap_open">AMRAP offen</string>
+    <string name="mode_group">GRUPPENTRAINING</string>
 
     <!-- Trainieren -->
     <string name="train_subtitle">Profil wählen, Modus wählen, starten.</string>
@@ -32,6 +33,13 @@
     <string name="error_invalid_time">Bitte eine gültige Zeit eingeben.</string>
     <string name="error_no_usable_items">Das Profil enthält keine nutzbaren Einträge.</string>
     <string name="action_start">START</string>
+    <string name="label_group_participants">Teilnehmer</string>
+    <string name="group_setup_hint">2–20 Teilnehmer. Alle absolvieren denselben Ablauf mit versetzten Startpositionen, damit sich die Gruppe verteilt.</string>
+    <string name="group_training_title">GRUPPENTRAINING</string>
+    <string name="group_participants_count">%1$d Teilnehmer</string>
+    <string name="group_next">danach: %1$s</string>
+    <string name="dialog_finish_group_title">Gruppentraining beenden?</string>
+    <string name="dialog_finish_group_text">Der Gruppenmodus wird nicht in der Historie gespeichert.</string>
     <string name="train_footer_hint">Nach START ist die Trainingsansicht absichtlich gesperrt: Bildschirm antippen = nächste Runde, sonst nur TRAINING BEENDEN.</string>
 
     <!-- Profile -->

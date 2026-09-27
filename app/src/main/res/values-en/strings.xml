@@ -13,6 +13,7 @@
     <string name="mode_distance">Distance</string>
     <string name="mode_amrap_time">AMRAP Time</string>
     <string name="mode_amrap_open">AMRAP open</string>
+    <string name="mode_group">GROUP TRAINING</string>
 
     <!-- Train -->
     <string name="train_subtitle">Choose a profile, choose a mode, start.</string>
@@ -32,6 +33,13 @@
     <string name="error_invalid_time">Please enter a valid time.</string>
     <string name="error_no_usable_items">This profile has no usable entries.</string>
     <string name="action_start">START</string>
+    <string name="label_group_participants">Participants</string>
+    <string name="group_setup_hint">2–20 participants. Everyone follows the same sequence with staggered starting positions to spread the group out.</string>
+    <string name="group_training_title">GROUP TRAINING</string>
+    <string name="group_participants_count">%1$d participants</string>
+    <string name="group_next">next: %1$s</string>
+    <string name="dialog_finish_group_title">Finish group training?</string>
+    <string name="dialog_finish_group_text">Group training is not saved to history.</string>
     <string name="train_footer_hint">Once you hit START, the workout screen is deliberately locked: tap the screen = next round, otherwise only FINISH TRAINING.</string>
 
     <!-- Profiles -->
