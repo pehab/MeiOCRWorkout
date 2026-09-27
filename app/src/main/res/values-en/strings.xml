@@ -52,6 +52,12 @@
     <!-- Profiles -->
     <string name="title_profiles">Profiles</string>
     <string name="version_label">v%1$s (%2$d)</string>
+    <string name="about_title">About MeiOCRWorkout</string>
+    <string name="about_version">Version %1$s (%2$d)</string>
+    <string name="about_author">Developer: %1$s</string>
+    <string name="about_email">Email: %1$s</string>
+    <string name="about_github">GitHub: %1$s</string>
+    <string name="about_footer">Community project for OCR training. An optional support/donation link can be added here later.</string>
     <string name="action_new">New</string>
     <string name="action_duplicate">Duplicate</string>
     <string name="action_rename">Rename</string>

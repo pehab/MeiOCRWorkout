@@ -11,6 +11,7 @@ import de.haberland.meiocrworkout.data.local.*
 import de.haberland.meiocrworkout.data.repository.*
 import de.haberland.meiocrworkout.util.*
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,6 +54,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -71,6 +73,7 @@ fun ProfilesScreen(
     var showNewDialog by remember { mutableStateOf(false) }
     var showRenameDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showAboutDialog by remember { mutableStateOf(false) }
     var profileMenu by remember { mutableStateOf(false) }
 
     val profile = profiles.firstOrNull { it.id == selectedProfileId } ?: profiles.first()
@@ -86,7 +89,8 @@ fun ProfilesScreen(
                 Text(
                     stringResource(R.string.version_label, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE),
                     fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.clickable { showAboutDialog = true }
                 )
             }
             Box {
@@ -171,6 +175,10 @@ fun ProfilesScreen(
         )
     }
 
+    if (showAboutDialog) {
+        AboutDialog(onDismiss = { showAboutDialog = false })
+    }
+
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -187,6 +195,54 @@ fun ProfilesScreen(
             dismissButton = { TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.action_cancel_caps)) } }
         )
     }
+}
+
+
+@Composable
+private fun AboutDialog(onDismiss: () -> Unit) {
+    val uriHandler = LocalUriHandler.current
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.about_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text(
+                    stringResource(
+                        R.string.about_version,
+                        BuildConfig.VERSION_NAME,
+                        BuildConfig.VERSION_CODE
+                    ),
+                    fontWeight = FontWeight.Bold
+                )
+                Text(stringResource(R.string.about_author, "Peter Haberland"))
+                Text(
+                    stringResource(R.string.about_email, "phaberland@googlemail.com"),
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable {
+                        uriHandler.openUri("mailto:phaberland@googlemail.com")
+                    }
+                )
+                Text(
+                    stringResource(R.string.about_github, "github.com/pehab/MeiOCRWorkout"),
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable {
+                        uriHandler.openUri("https://github.com/pehab/MeiOCRWorkout")
+                    }
+                )
+                Text(
+                    stringResource(R.string.about_footer),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 13.sp
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_ok))
+            }
+        }
+    )
 }
 
 @Composable
