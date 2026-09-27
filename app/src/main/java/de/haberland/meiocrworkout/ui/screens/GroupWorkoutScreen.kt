@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import de.haberland.meiocrworkout.R
 import de.haberland.meiocrworkout.domain.model.GroupAthletePlan
 import de.haberland.meiocrworkout.domain.model.GroupWorkoutSession
+import de.haberland.meiocrworkout.domain.model.WorkoutMode
 import de.haberland.meiocrworkout.domain.model.WorkoutRound
 import de.haberland.meiocrworkout.util.formatDuration
 import kotlinx.coroutines.delay
@@ -74,9 +75,10 @@ fun GroupWorkoutScreen(
     }
 
     val elapsed = now - started
-    val targetMs = session.durationMinutes * 60_000L
-    val remaining = (targetMs - elapsed).coerceAtLeast(0L)
-    val timeUp = elapsed >= targetMs
+    val targetMs = session.plan.requestedDurationMinutes?.times(60_000L)
+    val timeUp = session.plan.mode == WorkoutMode.AMRAP_TIME &&
+        targetMs != null &&
+        elapsed >= targetMs
     val highlighted = session.athletes.firstOrNull { it.id == highlightedId }
 
     Column(
@@ -106,7 +108,12 @@ fun GroupWorkoutScreen(
 
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = if (timeUp) stringResource(R.string.workout_time_up) else formatDuration(remaining),
+                    text = when {
+                        timeUp -> stringResource(R.string.workout_time_up)
+                        session.plan.mode == WorkoutMode.AMRAP_TIME && targetMs != null ->
+                            formatDuration((targetMs - elapsed).coerceAtLeast(0L))
+                        else -> formatDuration(elapsed)
+                    },
                     fontWeight = FontWeight.Black,
                     fontSize = 28.sp,
                     color = if (timeUp) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
@@ -123,6 +130,7 @@ fun GroupWorkoutScreen(
             AthleteCard(
                 athlete = athlete,
                 index = indices[athlete.id] ?: 0,
+                openEnded = session.plan.isOpenEnded,
                 emphasized = true,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -135,7 +143,6 @@ fun GroupWorkoutScreen(
             val count = session.athletes.size
             val columns = when {
                 maxWidth < 600.dp -> if (count <= 4) 2 else 3
-                count <= 8 -> 4
                 count <= 16 -> 4
                 else -> 5
             }
@@ -150,14 +157,20 @@ fun GroupWorkoutScreen(
                     items = session.athletes,
                     key = { it.id },
                 ) { athlete ->
+                    val current = indices[athlete.id] ?: 0
                     AthleteCard(
                         athlete = athlete,
-                        index = indices[athlete.id] ?: 0,
+                        index = current,
+                        openEnded = session.plan.isOpenEnded,
                         emphasized = false,
                         modifier = Modifier.height(if (count <= 8) 150.dp else 126.dp),
                         onClick = {
-                            val current = indices[athlete.id] ?: 0
-                            indices[athlete.id] = (current + 1) % athlete.rounds.size
+                            val nextIndex = if (session.plan.isOpenEnded) {
+                                (current + 1) % athlete.rounds.size
+                            } else {
+                                (current + 1).coerceAtMost(athlete.rounds.size)
+                            }
+                            indices[athlete.id] = nextIndex
                             highlightedId = athlete.id
                         },
                     )
@@ -198,20 +211,23 @@ fun GroupWorkoutScreen(
 private fun AthleteCard(
     athlete: GroupAthletePlan,
     index: Int,
+    openEnded: Boolean,
     emphasized: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    val round = athlete.rounds[index % athlete.rounds.size]
-    val next = athlete.rounds[(index + 1) % athlete.rounds.size]
+    val completed = !openEnded && index >= athlete.rounds.size
+    val safeIndex = if (completed) athlete.rounds.lastIndex else index % athlete.rounds.size
+    val round = athlete.rounds[safeIndex]
+    val next = athlete.rounds[(safeIndex + 1) % athlete.rounds.size]
 
     Card(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier.clickable(enabled = !completed, onClick = onClick),
         colors = CardDefaults.cardColors(
-            containerColor = if (emphasized) {
-                MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
-            } else {
-                MaterialTheme.colorScheme.surface
+            containerColor = when {
+                completed -> MaterialTheme.colorScheme.surfaceVariant
+                emphasized -> MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
+                else -> MaterialTheme.colorScheme.surface
             },
         ),
         shape = RoundedCornerShape(if (emphasized) 22.dp else 16.dp),
@@ -234,28 +250,37 @@ private fun AthleteCard(
                     modifier = Modifier.weight(1f),
                 )
                 Text(
-                    text = "${index + 1}/${athlete.rounds.size}",
+                    text = if (completed) "✓" else "${safeIndex + 1}/${athlete.rounds.size}",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 11.sp,
                 )
             }
 
-            Text(
-                text = roundLabel(round),
-                fontWeight = FontWeight.Black,
-                fontSize = if (emphasized) 24.sp else 18.sp,
-                lineHeight = if (emphasized) 26.sp else 20.sp,
-                textAlign = TextAlign.Start,
-                maxLines = 2,
-            )
+            if (completed) {
+                Text(
+                    text = stringResource(R.string.group_completed),
+                    fontWeight = FontWeight.Black,
+                    fontSize = if (emphasized) 24.sp else 18.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            } else {
+                Text(
+                    text = roundLabel(round),
+                    fontWeight = FontWeight.Black,
+                    fontSize = if (emphasized) 24.sp else 18.sp,
+                    lineHeight = if (emphasized) 26.sp else 20.sp,
+                    textAlign = TextAlign.Start,
+                    maxLines = 2,
+                )
 
-            Text(
-                text = stringResource(R.string.group_next, roundLabel(next)),
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-                fontSize = if (emphasized) 14.sp else 11.sp,
-                maxLines = 1,
-            )
+                Text(
+                    text = stringResource(R.string.group_next, roundLabel(next)),
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = if (emphasized) 14.sp else 11.sp,
+                    maxLines = 1,
+                )
+            }
         }
     }
 }

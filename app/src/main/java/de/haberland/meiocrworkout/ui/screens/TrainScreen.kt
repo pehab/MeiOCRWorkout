@@ -149,21 +149,14 @@ fun TrainScreen(
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
                         )
-                        Text(stringResource(R.string.label_target_time), fontWeight = FontWeight.Bold)
-                        OutlinedTextField(
-                            minutesText,
-                            { minutesText = it.filter(Char::isDigit).take(3) },
-                            modifier = Modifier.fillMaxWidth(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            suffix = { Text(stringResource(R.string.suffix_minutes)) },
-                            singleLine = true,
-                        )
                         Text(
                             stringResource(R.string.group_setup_hint),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 13.sp,
                         )
-                    } else when (mode) {
+                    }
+
+                    when (mode) {
                         WorkoutMode.ROUNDS -> {
                             Text(stringResource(R.string.label_rounds_count), fontWeight = FontWeight.Bold)
                             OutlinedTextField(
@@ -214,15 +207,7 @@ fun TrainScreen(
                         onClick = {
                             error = null
                             runCatching {
-                                if (groupMode) {
-                                    val participants = participantText.toIntOrNull()
-                                        ?.takeIf { it in 2..20 }
-                                        ?: error(invalidRoundsError)
-                                    val minutes = minutesText.toIntOrNull()
-                                        ?.coerceIn(Limits.AMRAP_MINUTES_MIN, Limits.AMRAP_MINUTES_MAX)
-                                        ?: error(invalidTimeError)
-                                    GroupSessionGenerator.create(profile, participants, minutes)
-                                } else when (mode) {
+                                val generatedPlan = when (mode) {
                                     WorkoutMode.ROUNDS -> {
                                         val count = roundsText.toIntOrNull()
                                             ?.coerceIn(Limits.ROUNDS_MIN, Limits.ROUNDS_MAX)
@@ -244,10 +229,19 @@ fun TrainScreen(
                                     }
                                     WorkoutMode.AMRAP_OPEN -> SessionGenerator.byAmrapOpen(profile)
                                 }
-                            }.onSuccess { generated ->
-                                when (generated) {
-                                    is WorkoutPlan -> onStart(generated)
-                                    is GroupWorkoutSession -> onStartGroup(generated)
+
+                                if (groupMode) {
+                                    val participants = participantText.toIntOrNull()
+                                        ?.takeIf { it in 2..20 }
+                                        ?: error(invalidRoundsError)
+                                    onStartGroup(
+                                        GroupSessionGenerator.create(
+                                            plan = generatedPlan,
+                                            participantCount = participants,
+                                        )
+                                    )
+                                } else {
+                                    onStart(generatedPlan)
                                 }
                             }.onFailure {
                                 error = it.message ?: noUsableItemsError

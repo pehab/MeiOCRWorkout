@@ -34,10 +34,11 @@
     <string name="error_no_usable_items">Das Profil enthält keine nutzbaren Einträge.</string>
     <string name="action_start">START</string>
     <string name="label_group_participants">Teilnehmer</string>
-    <string name="group_setup_hint">2–20 Teilnehmer. Alle absolvieren denselben Ablauf mit versetzten Startpositionen, damit sich die Gruppe verteilt.</string>
+    <string name="group_setup_hint">2–20 Teilnehmer. Trainingsart und Ziel bleiben identisch zum Einzelmodus; nur Startpunkte und Trainingsansicht werden für die Gruppe verteilt.</string>
     <string name="group_training_title">GRUPPENTRAINING</string>
     <string name="group_participants_count">%1$d Teilnehmer</string>
     <string name="group_next">danach: %1$s</string>
+    <string name="group_completed">FERTIG</string>
     <string name="dialog_finish_group_title">Gruppentraining beenden?</string>
     <string name="dialog_finish_group_text">Der Gruppenmodus wird nicht in der Historie gespeichert.</string>
     <string name="train_footer_hint">Nach START ist die Trainingsansicht absichtlich gesperrt: Bildschirm antippen = nächste Runde, sonst nur TRAINING BEENDEN.</string>
