@@ -169,8 +169,8 @@ class CommunityRepository(
                 "enabled" to it.enabled,
             )
         },
-        "routeLoads" to routeLoads.map(WeightedItem::toFirestoreMap),
-        "obstacles" to obstacles.map(WeightedItem::toFirestoreMap),
+        "routeLoads" to routeLoads.map { it.toFirestoreMap() },
+        "obstacles" to obstacles.map { it.toFirestoreMap() },
     )
 
     private fun WeightedItem.toFirestoreMap(): Map<String, Any?> = mapOf(
@@ -221,8 +221,8 @@ class CommunityRepository(
                 enabled = item["enabled"] as? Boolean ?: true,
             )
         }
-        val routeLoads = this["routeLoads"].asMapList().map(Map<String, Any?>::toWeightedItem)
-        val obstacles = this["obstacles"].asMapList().map(Map<String, Any?>::toWeightedItem)
+        val routeLoads = this["routeLoads"].asMapList().map { it.toWeightedItem() }
+        val obstacles = this["obstacles"].asMapList().map { it.toWeightedItem() }
         return WorkoutProfile(
             name = this["name"] as? String ?: "Community-Profil",
             distances = distances,
