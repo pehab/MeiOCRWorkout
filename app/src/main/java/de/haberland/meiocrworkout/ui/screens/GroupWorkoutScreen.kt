@@ -1,6 +1,7 @@
 package de.haberland.meiocrworkout.ui.screens
 
 import android.os.SystemClock
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -142,8 +143,9 @@ fun GroupWorkoutScreen(
         BoxWithConstraints(modifier = Modifier.weight(1f)) {
             val count = session.athletes.size
             val columns = when {
-                maxWidth < 600.dp -> if (count <= 4) 2 else 3
-                count <= 16 -> 4
+                maxWidth < 700.dp -> 2
+                maxWidth < 1000.dp -> if (count <= 8) 3 else 4
+                count <= 12 -> 4
                 else -> 5
             }
 
@@ -163,7 +165,13 @@ fun GroupWorkoutScreen(
                         index = current,
                         openEnded = session.plan.isOpenEnded,
                         emphasized = false,
-                        modifier = Modifier.height(if (count <= 8) 150.dp else 126.dp),
+                        modifier = Modifier.height(
+                            when {
+                                maxWidth < 700.dp -> 156.dp
+                                count <= 8 -> 150.dp
+                                else -> 126.dp
+                            }
+                        ),
                         onClick = {
                             val nextIndex = if (session.plan.isOpenEnded) {
                                 (current + 1) % athlete.rounds.size
@@ -220,16 +228,18 @@ private fun AthleteCard(
     val safeIndex = if (completed) athlete.rounds.lastIndex else index % athlete.rounds.size
     val round = athlete.rounds[safeIndex]
     val next = athlete.rounds[(safeIndex + 1) % athlete.rounds.size]
+    val athleteColor = GROUP_COLORS[athlete.colorIndex % GROUP_COLORS.size]
 
     Card(
         modifier = modifier.clickable(enabled = !completed, onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = when {
                 completed -> MaterialTheme.colorScheme.surfaceVariant
-                emphasized -> MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
+                emphasized -> athleteColor.copy(alpha = 0.14f)
                 else -> MaterialTheme.colorScheme.surface
             },
         ),
+        border = BorderStroke(if (emphasized) 3.dp else 2.dp, athleteColor.copy(alpha = 0.8f)),
         shape = RoundedCornerShape(if (emphasized) 22.dp else 16.dp),
     ) {
         Column(
@@ -251,8 +261,9 @@ private fun AthleteCard(
                 )
                 Text(
                     text = if (completed) "✓" else "${safeIndex + 1}/${athlete.rounds.size}",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = athleteColor,
                     fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
                 )
             }
 
@@ -261,7 +272,7 @@ private fun AthleteCard(
                     text = stringResource(R.string.group_completed),
                     fontWeight = FontWeight.Black,
                     fontSize = if (emphasized) 24.sp else 18.sp,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = athleteColor,
                 )
             } else {
                 Text(

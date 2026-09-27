@@ -60,6 +60,8 @@ fun TrainScreen(
     var profileMenu by remember { mutableStateOf(false) }
     var groupMode by remember { mutableStateOf(false) }
     var participantText by remember { mutableStateOf("8") }
+    var pendingGroupPlan by remember { mutableStateOf<WorkoutPlan?>(null) }
+    var pendingParticipantCount by remember { mutableStateOf(0) }
     var error by remember { mutableStateOf<String?>(null) }
 
     val profile = profiles.firstOrNull { it.id == selectedProfileId } ?: profiles.first()
@@ -234,12 +236,8 @@ fun TrainScreen(
                                     val participants = participantText.toIntOrNull()
                                         ?.takeIf { it in 2..20 }
                                         ?: error(invalidRoundsError)
-                                    onStartGroup(
-                                        GroupSessionGenerator.create(
-                                            plan = generatedPlan,
-                                            participantCount = participants,
-                                        )
-                                    )
+                                    pendingParticipantCount = participants
+                                    pendingGroupPlan = generatedPlan
                                 } else {
                                     onStart(generatedPlan)
                                 }
@@ -262,6 +260,22 @@ fun TrainScreen(
                 fontSize = 13.sp
             )
         }
+    }
+
+    pendingGroupPlan?.let { plan ->
+        GroupSetupDialog(
+            participantCount = pendingParticipantCount,
+            onDismiss = { pendingGroupPlan = null },
+            onStart = { participants ->
+                pendingGroupPlan = null
+                onStartGroup(
+                    GroupSessionGenerator.create(
+                        plan = plan,
+                        participants = participants,
+                    )
+                )
+            },
+        )
     }
 }
 

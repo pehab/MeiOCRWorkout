@@ -34,6 +34,12 @@
     <string name="error_no_usable_items">This profile has no usable entries.</string>
     <string name="action_start">START</string>
     <string name="label_group_participants">Participants</string>
+    <string name="group_setup_title">Set up participants</string>
+    <string name="group_start_now">START NOW</string>
+    <string name="group_setup_optional_hint">Optional: adjust names and colors. You can start immediately without changing anything.</string>
+    <string name="group_participant_name">Participant %1$d</string>
+    <string name="group_participant_default">Participant %1$d</string>
+    <string name="group_color">Color</string>
     <string name="group_setup_hint">2–20 participants. Training mode and target stay identical to solo mode; only starting points and the workout view are adapted for the group.</string>
     <string name="group_training_title">GROUP TRAINING</string>
     <string name="group_participants_count">%1$d participants</string>

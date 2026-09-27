@@ -34,6 +34,12 @@
     <string name="error_no_usable_items">Das Profil enthält keine nutzbaren Einträge.</string>
     <string name="action_start">START</string>
     <string name="label_group_participants">Teilnehmer</string>
+    <string name="group_setup_title">Teilnehmer einrichten</string>
+    <string name="group_start_now">JETZT STARTEN</string>
+    <string name="group_setup_optional_hint">Optional: Namen und Farben anpassen. Ohne Änderungen kann das Training direkt gestartet werden.</string>
+    <string name="group_participant_name">Teilnehmer %1$d</string>
+    <string name="group_participant_default">Teilnehmer %1$d</string>
+    <string name="group_color">Farbe</string>
     <string name="group_setup_hint">2–20 Teilnehmer. Trainingsart und Ziel bleiben identisch zum Einzelmodus; nur Startpunkte und Trainingsansicht werden für die Gruppe verteilt.</string>
     <string name="group_training_title">GRUPPENTRAINING</string>
     <string name="group_participants_count">%1$d Teilnehmer</string>
