@@ -47,7 +47,6 @@ fun CommunityHubDialog(
     onApprove: (String) -> Unit,
     onReject: (String, String) -> Unit,
     onSetModerator: (String, Boolean) -> Unit,
-    onBootstrapAdmin: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     val tabs = buildList {
@@ -112,7 +111,6 @@ fun CommunityHubDialog(
                     )
                     CommunityTab.ADMIN -> AdminPanel(
                         onSetModerator = onSetModerator,
-                        onBootstrapAdmin = onBootstrapAdmin,
                     )
                 }
             }
@@ -339,7 +337,6 @@ private fun ModerationList(
 @Composable
 private fun AdminPanel(
     onSetModerator: (String, Boolean) -> Unit,
-    onBootstrapAdmin: () -> Unit,
 ) {
     var email by remember { mutableStateOf("") }
 
@@ -367,9 +364,6 @@ private fun AdminPanel(
             ) {
                 Text(stringResource(R.string.action_remove_moderator))
             }
-        }
-        TextButton(onClick = onBootstrapAdmin) {
-            Text(stringResource(R.string.action_refresh_admin_role))
         }
     }
 }

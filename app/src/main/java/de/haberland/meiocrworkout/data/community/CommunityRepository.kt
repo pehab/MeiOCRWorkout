@@ -12,7 +12,6 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.functions.FirebaseFunctions
 import de.haberland.meiocrworkout.R
 import de.haberland.meiocrworkout.domain.model.CommunityProfile
 import de.haberland.meiocrworkout.domain.model.CommunityRole
@@ -27,7 +26,6 @@ import kotlinx.coroutines.tasks.await
 class CommunityRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
-    private val functions: FirebaseFunctions = FirebaseFunctions.getInstance(),
 ) {
     suspend fun signInWithGoogle(activity: Activity): CommunityUser {
         val request = GetCredentialRequest.Builder()
@@ -41,28 +39,39 @@ class CommunityRepository(
 
         val result = CredentialManager.create(activity).getCredential(activity, request)
         val credential = result.credential
-        require(credential is CustomCredential &&
-            credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+        require(
+            credential is CustomCredential &&
+                credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
         ) { "Google-Anmeldung konnte nicht gelesen werden." }
 
         val google = GoogleIdTokenCredential.createFrom(credential.data)
         val firebaseCredential = GoogleAuthProvider.getCredential(google.idToken, null)
         auth.signInWithCredential(firebaseCredential).await()
-        return requireNotNull(loadCurrentUser(forceRefresh = true))
+        upsertCommunityUser()
+        return requireNotNull(loadCurrentUser())
     }
 
     fun signOut() {
         auth.signOut()
     }
 
-    suspend fun loadCurrentUser(forceRefresh: Boolean = false): CommunityUser? {
+    suspend fun loadCurrentUser(): CommunityUser? {
         val user = auth.currentUser ?: return null
-        val token = user.getIdToken(forceRefresh).await()
-        val role = when ((token.claims["role"] as? String)?.lowercase()) {
+        upsertCommunityUser()
+
+        val roleValue = firestore.collection(ROLES)
+            .document(user.uid)
+            .get()
+            .await()
+            .getString("role")
+            ?.lowercase()
+
+        val role = when (roleValue) {
             "admin" -> CommunityRole.ADMIN
             "moderator" -> CommunityRole.MODERATOR
             else -> CommunityRole.USER
         }
+
         return CommunityUser(
             uid = user.uid,
             displayName = user.displayName.orEmpty(),
@@ -110,7 +119,7 @@ class CommunityRepository(
     ) {
         val user = auth.currentUser ?: error("Für das Veröffentlichen ist eine Anmeldung nötig.")
         val targetProfileId = "${user.uid}_${profile.id}"
-        val data = mutableMapOf<String, Any?>(
+        val data = mapOf<String, Any?>(
             "targetProfileId" to targetProfileId,
             "ownerUid" to user.uid,
             "ownerEmail" to user.email.orEmpty(),
@@ -127,30 +136,97 @@ class CommunityRepository(
     }
 
     suspend fun approveSubmission(submissionId: String) {
-        functions
-            .getHttpsCallable("approveSubmission")
-            .call(mapOf("submissionId" to submissionId))
-            .await()
+        val moderator = requireModerator()
+        val submissionRef = firestore.collection(SUBMISSIONS).document(submissionId)
+
+        firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(submissionRef)
+            check(snapshot.exists()) { "Einreichung nicht gefunden." }
+            check(snapshot.getString("status") == "pending") { "Die Einreichung ist nicht mehr offen." }
+
+            val targetProfileId = snapshot.getString("targetProfileId").orEmpty()
+            check(targetProfileId.isNotBlank()) { "Zielprofil fehlt." }
+
+            val publishedRef = firestore.collection(PUBLISHED).document(targetProfileId)
+            val published = mapOf<String, Any?>(
+                "ownerUid" to snapshot.getString("ownerUid").orEmpty(),
+                "creatorName" to snapshot.getString("creatorName").orEmpty(),
+                "description" to snapshot.getString("description").orEmpty(),
+                "location" to snapshot.getString("location").orEmpty(),
+                "tags" to snapshot.get("tags").asStringList(),
+                "formatVersion" to ((snapshot.getLong("formatVersion") ?: 1L).toInt()),
+                "profile" to snapshot.get("profile"),
+                "updatedAt" to Timestamp.now(),
+                "approvedBy" to moderator.uid,
+                "sourceSubmissionId" to submissionId,
+            )
+
+            transaction.set(publishedRef, published)
+            transaction.update(
+                submissionRef,
+                mapOf(
+                    "status" to "approved",
+                    "reviewedAt" to Timestamp.now(),
+                    "reviewedBy" to moderator.uid,
+                    "moderatorNote" to "",
+                )
+            )
+        }.await()
     }
 
     suspend fun rejectSubmission(submissionId: String, note: String) {
-        functions
-            .getHttpsCallable("rejectSubmission")
-            .call(mapOf("submissionId" to submissionId, "note" to note.trim()))
-            .await()
+        val moderator = requireModerator()
+        val ref = firestore.collection(SUBMISSIONS).document(submissionId)
+
+        firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(ref)
+            check(snapshot.exists()) { "Einreichung nicht gefunden." }
+            check(snapshot.getString("status") == "pending") { "Die Einreichung ist nicht mehr offen." }
+
+            transaction.update(
+                ref,
+                mapOf(
+                    "status" to "rejected",
+                    "reviewedAt" to Timestamp.now(),
+                    "reviewedBy" to moderator.uid,
+                    "moderatorNote" to note.trim().take(500),
+                )
+            )
+        }.await()
     }
 
     suspend fun setModerator(email: String, enabled: Boolean) {
-        functions
-            .getHttpsCallable("setModerator")
-            .call(mapOf("email" to email.trim(), "enabled" to enabled))
-            .await()
-    }
+        val admin = requireNotNull(loadCurrentUser())
+        check(admin.role == CommunityRole.ADMIN) { "Adminrechte erforderlich." }
 
-    suspend fun bootstrapAdmin(): CommunityUser {
-        functions.getHttpsCallable("bootstrapAdmin").call().await()
-        auth.currentUser?.getIdToken(true)?.await()
-        return requireNotNull(loadCurrentUser(forceRefresh = true))
+        val normalizedEmail = email.trim().lowercase()
+        check(normalizedEmail.isNotBlank()) { "E-Mail fehlt." }
+
+        val matches = firestore.collection(USERS)
+            .whereEqualTo("emailNormalized", normalizedEmail)
+            .limit(1)
+            .get()
+            .await()
+            .documents
+
+        val target = matches.firstOrNull()
+            ?: error("Kein MeiOCRWorkout-Konto mit dieser E-Mail gefunden. Der Nutzer muss sich mindestens einmal in MeiOCRWorkout anmelden.")
+
+        val targetUid = target.id
+        check(targetUid != admin.uid) { "Das eigene Admin-Konto kann hier nicht geändert werden." }
+
+        val roleRef = firestore.collection(ROLES).document(targetUid)
+        if (enabled) {
+            roleRef.set(
+                mapOf(
+                    "role" to "moderator",
+                    "email" to target.getString("email").orEmpty(),
+                    "updatedAt" to Timestamp.now(),
+                )
+            ).await()
+        } else {
+            roleRef.delete().await()
+        }
     }
 
     fun importCopy(source: WorkoutProfile): WorkoutProfile = source.copy(
@@ -159,6 +235,28 @@ class CommunityRepository(
         routeLoads = source.routeLoads.map { it.copy(id = UUID.randomUUID().toString()) },
         obstacles = source.obstacles.map { it.copy(id = UUID.randomUUID().toString()) },
     )
+
+    private suspend fun upsertCommunityUser() {
+        val user = auth.currentUser ?: return
+        val email = user.email.orEmpty()
+        firestore.collection(USERS)
+            .document(user.uid)
+            .set(
+                mapOf(
+                    "email" to email,
+                    "emailNormalized" to email.lowercase(),
+                    "displayName" to user.displayName.orEmpty(),
+                    "updatedAt" to Timestamp.now(),
+                )
+            )
+            .await()
+    }
+
+    private suspend fun requireModerator(): CommunityUser {
+        val user = requireNotNull(loadCurrentUser()) { "Anmeldung erforderlich." }
+        check(user.role.canModerate) { "Moderatorrechte erforderlich." }
+        return user
+    }
 
     private fun WorkoutProfile.toFirestoreMap(): Map<String, Any?> = mapOf(
         "name" to name,
@@ -252,5 +350,7 @@ class CommunityRepository(
     companion object {
         private const val PUBLISHED = "published_profiles"
         private const val SUBMISSIONS = "profile_submissions"
+        private const val ROLES = "community_roles"
+        private const val USERS = "community_users"
     }
 }

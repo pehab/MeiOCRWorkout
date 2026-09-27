@@ -17,13 +17,13 @@ Workout profiles, workout history, and group-training participant metadata remai
 ## Third parties
 MeiOCRWorkout does not contain advertising SDKs and does not use Firebase Analytics or other analytics/tracking services.
 
-The application uses Google Play services for app-update functionality, Firebase Authentication for optional sign-in, Cloud Firestore for community profile discovery/submissions, Firebase Cloud Functions for moderation/admin actions, and Firebase Crashlytics for crash reporting:
+The application uses Google Play services for app-update functionality, Firebase Authentication for optional sign-in, Cloud Firestore for community profile discovery/submissions, and Firebase Crashlytics for crash reporting:
 
 - Google Privacy Policy: https://policies.google.com/privacy
 - Firebase Privacy and Security: https://firebase.google.com/support/privacy/
 
 ## Data sharing
-Personal workout history is not sold or shared with third parties. Profiles are shared publicly only when the user explicitly submits them and they are approved by moderation. Account/profile-submission metadata and technical crash information may be processed by Google/Firebase to provide the requested services.
+Personal workout history is not sold or shared with third parties. Profiles are shared publicly only when the user explicitly submits them and they are approved by moderation. Account/profile-submission metadata, community role information, and technical crash information may be processed by Google/Firebase to provide the requested services.
 
 ## Data deletion
 Locally stored workout data can be deleted using the application's available deletion functions, by clearing the app data, or by uninstalling the application. Community submissions/publications are separate cloud records; deletion/withdrawal controls can be added as the community feature evolves.

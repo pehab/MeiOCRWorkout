@@ -79,11 +79,13 @@ Version 0.10 adds an optional Firebase-backed community layer while keeping norm
 - local edits never change an already published profile automatically; pressing **Veröffentlichen** creates a new moderated submission
 - published updates replace the public version only after moderator approval
 - moderators can approve/reject pending submissions
-- the admin can grant or revoke moderator rights by Firebase account email
-- Firestore security rules keep public reads open while submissions require authentication
-- privileged moderation/admin actions run through Firebase Cloud Functions and custom claims
+- roles are stored in Firestore under `community_roles/{uid}`; the initial admin is created once manually in the Firebase console
+- the admin can grant or revoke moderator rights by Firebase account email after that user has signed in to MeiOCRWorkout at least once
+- MeiOCRWorkout maintains a small `community_users/{uid}` directory so the admin can resolve an authenticated account email to its Firebase UID
+- Firestore security rules enforce public profile reads, authenticated submissions, moderator approval and admin-only role management
+- no Cloud Functions backend is required
 
-Backend files are included in the repository: `firebase.json`, `firestore.rules`, `firestore.indexes.json`, and `functions/`.
+Backend configuration files are included in the repository: `firebase.json`, `firestore.rules`, and `firestore.indexes.json`.
 
 ## Workout modes
 

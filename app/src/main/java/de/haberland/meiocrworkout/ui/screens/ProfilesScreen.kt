@@ -255,7 +255,6 @@ fun ProfilesScreen(
             onApprove = communityViewModel::approve,
             onReject = communityViewModel::reject,
             onSetModerator = communityViewModel::setModerator,
-            onBootstrapAdmin = communityViewModel::bootstrapAdmin,
             onDismiss = { showCommunityDialog = false },
         )
     }
