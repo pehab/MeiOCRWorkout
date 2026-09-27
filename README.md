@@ -1,4 +1,4 @@
-# MeiOCRWorkout – Alpha MVP 0.9
+# MeiOCRWorkout – Alpha MVP 0.10
 
 Native Android app for configurable OCR workout simulation.
 
@@ -6,10 +6,10 @@ Native Android app for configurable OCR workout simulation.
 - Package / namespace / applicationId: **de.haberland.meiocrworkout**
 - Kotlin + Jetpack Compose
 - Room/SQLite local persistence
-- fully offline; no account or backend
+- local training/profile data stays in Room; optional Firebase community features add public profile discovery and authenticated publishing
 
 
-## Alpha features in 0.9
+## Alpha features in 0.10
 
 ### Launcher icon
 
@@ -17,7 +17,7 @@ MeiOCRWorkout now ships with its own adaptive launcher icon: a dark OCR-rig fram
 
 ### Version display
 
-The Profile screen shows the current `versionName` and `versionCode` directly from `BuildConfig`. Current alpha: **0.9.0 (9)**.
+The Profile screen shows the current `versionName` and `versionCode` directly from `BuildConfig`. Current alpha: **0.10.0 (10)**.
 
 ### Google Play in-app update foundation
 
@@ -67,6 +67,23 @@ Each profile owns three weighted pools:
 Every item can be enabled/disabled and weighted 1–20. Names and optional display details can be edited (e.g. `Burpees` / `15 Wdh.`).
 
 Profiles can be created, renamed, deep-duplicated and deleted. Duplicating generates fresh IDs for every child entry so Room keys remain unique. Deleting a profile does not alter past training history.
+
+## Community profiles
+
+Version 0.10 adds an optional Firebase-backed community layer while keeping normal training usable without an account.
+
+- everyone can browse, search and import approved community profiles
+- imports become independent local copies with fresh IDs and can be edited freely
+- Google/Firebase authentication is only required for publishing
+- authenticated users can submit their own local profiles for review
+- local edits never change an already published profile automatically; pressing **Veröffentlichen** creates a new moderated submission
+- published updates replace the public version only after moderator approval
+- moderators can approve/reject pending submissions
+- the admin can grant or revoke moderator rights by Firebase account email
+- Firestore security rules keep public reads open while submissions require authentication
+- privileged moderation/admin actions run through Firebase Cloud Functions and custom claims
+
+Backend files are included in the repository: `firebase.json`, `firestore.rules`, `firestore.indexes.json`, and `functions/`.
 
 ## Workout modes
 
