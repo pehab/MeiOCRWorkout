@@ -235,8 +235,11 @@ fun MeiOCRWorkoutApp(
                     )
                 }
 
-                AppScreen.SUMMARY -> viewModel.summaryRecord?.let { record ->
-                    SummaryScreen(record, onDone = viewModel::backToTrainFromSummary)
+                AppScreen.SUMMARY -> if (viewModel.summaryRecords.isNotEmpty()) {
+                    SummaryScreen(
+                        records = viewModel.summaryRecords,
+                        onDone = viewModel::backToTrainFromSummary,
+                    )
                 }
             }
         }

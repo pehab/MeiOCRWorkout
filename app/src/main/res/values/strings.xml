@@ -46,7 +46,7 @@
     <string name="group_next">danach: %1$s</string>
     <string name="group_completed">FERTIG</string>
     <string name="dialog_finish_group_title">Gruppentraining beenden?</string>
-    <string name="dialog_finish_group_text">Der Gruppenmodus wird nicht in der Historie gespeichert.</string>
+    <string name="dialog_finish_group_text">Das Gruppentraining wird beendet. Die Ergebnisse aller Teilnehmer werden in der Historie gespeichert.</string>
     <string name="train_footer_hint">Nach START ist die Trainingsansicht absichtlich gesperrt: Bildschirm antippen = nächste Runde, sonst nur TRAINING BEENDEN.</string>
 
     <!-- Profile -->
@@ -93,6 +93,8 @@
     <!-- Historie -->
     <string name="title_history">Historie</string>
     <string name="history_subtitle">Lokal auf diesem Gerät gespeichert</string>
+    <string name="history_group_label">Gruppentraining · %1$d Teilnehmer</string>
+    <string name="label_participant">Teilnehmer</string>
     <string name="action_delete_all">Alle löschen</string>
     <string name="history_empty">Noch keine Trainings gespeichert.</string>
     <string name="dialog_delete_history_title">Historie löschen?</string>

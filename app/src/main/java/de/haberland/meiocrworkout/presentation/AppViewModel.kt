@@ -63,6 +63,8 @@ class AppViewModel(
         private set
     var summaryRecord by mutableStateOf<WorkoutRecord?>(null)
         private set
+    var summaryRecords by mutableStateOf<List<WorkoutRecord>>(emptyList())
+        private set
     var groupSession by mutableStateOf<GroupWorkoutSession?>(null)
         private set
 
@@ -112,10 +114,59 @@ class AppViewModel(
         appScreen = AppScreen.GROUP_WORKOUT
     }
 
-    fun finishGroupWorkout() {
+    fun finishGroupWorkout(result: GroupWorkoutResult) {
+        val session = groupSession ?: return
+        val groupId = java.util.UUID.randomUUID().toString()
+        val targetLabel = resolveTargetLabel(session.plan)
+
+        val records = session.athletes.mapNotNull { athlete ->
+            val participantResult = result.participants.firstOrNull { it.athleteId == athlete.id }
+                ?: return@mapNotNull null
+            if (participantResult.lapTimes.isEmpty()) return@mapNotNull null
+
+            val roundRecords = participantResult.lapTimes.mapIndexed { index, lapTime ->
+                val round = athlete.rounds[index % athlete.rounds.size]
+                WorkoutRoundRecord(
+                    number = index + 1,
+                    distanceMeters = round.distance?.meters ?: 0,
+                    routeLoadName = round.routeLoad?.name,
+                    routeLoadDetail = round.routeLoad?.detail,
+                    obstacleName = round.obstacle?.name,
+                    obstacleDetail = round.obstacle?.detail,
+                    durationMs = lapTime,
+                )
+            }
+
+            WorkoutRecord(
+                startedAtEpochMs = result.startedAtEpochMs,
+                profileName = session.plan.profileName,
+                mode = session.plan.mode,
+                targetLabel = targetLabel,
+                durationMs = result.durationMs,
+                aborted = result.aborted,
+                rounds = roundRecords,
+                groupId = groupId,
+                participantName = participantResult.name,
+                participantColorIndex = participantResult.colorIndex,
+            )
+        }
+
         groupSession = null
-        appScreen = AppScreen.ROOT
-        rootTab = RootTab.TRAIN
+        if (records.isEmpty()) {
+            appScreen = AppScreen.ROOT
+            rootTab = RootTab.TRAIN
+            return
+        }
+
+        summaryRecords = records
+        summaryRecord = records.first()
+        history = (records + history).distinctBy { it.id }.take(Limits.MAX_HISTORY_RECORDS)
+        viewModelScope.launch {
+            records.forEach { record ->
+                history = repo.addHistory(record)
+            }
+        }
+        appScreen = AppScreen.SUMMARY
     }
 
     fun cancelWorkoutWithoutRounds() {
@@ -149,6 +200,7 @@ class AppViewModel(
             history = (listOf(record) + history).distinctBy { it.id }.take(Limits.MAX_HISTORY_RECORDS)
             viewModelScope.launch { history = repo.addHistory(record) }
             summaryRecord = record
+            summaryRecords = listOf(record)
             appScreen = AppScreen.SUMMARY
         } else {
             appScreen = AppScreen.ROOT
@@ -156,6 +208,7 @@ class AppViewModel(
     }
 
     fun backToTrainFromSummary() {
+        summaryRecords = emptyList()
         appScreen = AppScreen.ROOT
         rootTab = RootTab.TRAIN
     }

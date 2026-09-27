@@ -79,7 +79,10 @@ data class WorkoutEntity(
     val mode: WorkoutMode,
     val targetLabel: String,
     val durationMs: Long,
-    val aborted: Boolean
+    val aborted: Boolean,
+    val groupId: String? = null,
+    val participantName: String? = null,
+    val participantColorIndex: Int? = null
 )
 
 @Entity(

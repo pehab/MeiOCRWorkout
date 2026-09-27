@@ -15,6 +15,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 /**
  * Room needs to know how to turn [WorkoutMode] and [WorkoutItemType] into a storable
@@ -55,7 +57,7 @@ class Converters {
         WorkoutRoundEntity::class,
         AppSettingEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -65,6 +67,14 @@ abstract class MeiOCRDatabase : RoomDatabase() {
     abstract fun settingsDao(): SettingsDao
 
     companion object {
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE workouts ADD COLUMN groupId TEXT")
+                db.execSQL("ALTER TABLE workouts ADD COLUMN participantName TEXT")
+                db.execSQL("ALTER TABLE workouts ADD COLUMN participantColorIndex INTEGER")
+            }
+        }
+
         @Volatile
         private var INSTANCE: MeiOCRDatabase? = null
 
@@ -75,6 +85,7 @@ abstract class MeiOCRDatabase : RoomDatabase() {
                     MeiOCRDatabase::class.java,
                     "meiocrworkout.db"
                 )
+                    .addMigrations(MIGRATION_1_2)
                     .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
                     .build()
                     .also { INSTANCE = it }

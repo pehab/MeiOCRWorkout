@@ -90,6 +90,9 @@ class AppRepository(context: Context) : WorkoutRepository {
             targetLabel = workout.targetLabel,
             durationMs = workout.durationMs,
             aborted = workout.aborted,
+            groupId = workout.groupId,
+            participantName = workout.participantName,
+            participantColorIndex = workout.participantColorIndex,
             rounds = relation.rounds.sortedBy { it.number }.map {
                 WorkoutRoundRecord(
                     number = it.number,
@@ -186,7 +189,10 @@ class AppRepository(context: Context) : WorkoutRepository {
                 mode = record.mode,
                 targetLabel = record.targetLabel,
                 durationMs = record.durationMs,
-                aborted = record.aborted
+                aborted = record.aborted,
+                groupId = record.groupId,
+                participantName = record.participantName,
+                participantColorIndex = record.participantColorIndex
             )
         )
         if (record.rounds.isNotEmpty()) {

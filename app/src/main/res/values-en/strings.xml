@@ -46,7 +46,7 @@
     <string name="group_next">next: %1$s</string>
     <string name="group_completed">DONE</string>
     <string name="dialog_finish_group_title">Finish group training?</string>
-    <string name="dialog_finish_group_text">Group training is not saved to history.</string>
+    <string name="dialog_finish_group_text">The group workout will end. Results for all participants will be saved to history.</string>
     <string name="train_footer_hint">Once you hit START, the workout screen is deliberately locked: tap the screen = next round, otherwise only FINISH TRAINING.</string>
 
     <!-- Profiles -->
@@ -92,6 +92,8 @@
     <!-- History -->
     <string name="title_history">History</string>
     <string name="history_subtitle">Saved locally on this device</string>
+    <string name="history_group_label">Group training · %1$d participants</string>
+    <string name="label_participant">Participant</string>
     <string name="action_delete_all">Delete all</string>
     <string name="history_empty">No workouts saved yet.</string>
     <string name="dialog_delete_history_title">Delete history?</string>

@@ -93,7 +93,10 @@ data class WorkoutRecord(
     val targetLabel: String,
     val durationMs: Long,
     val aborted: Boolean,
-    val rounds: List<WorkoutRoundRecord>
+    val rounds: List<WorkoutRoundRecord>,
+    val groupId: String? = null,
+    val participantName: String? = null,
+    val participantColorIndex: Int? = null
 ) {
     val completedRounds: Int get() = rounds.size
     val completedDistanceMeters: Int get() = rounds.sumOf { it.totalMeters }
@@ -104,4 +107,19 @@ data class WorkoutResult(
     val durationMs: Long,
     val startedAtEpochMs: Long,
     val aborted: Boolean
+)
+
+
+data class GroupParticipantWorkoutResult(
+    val athleteId: Int,
+    val name: String,
+    val colorIndex: Int,
+    val lapTimes: List<Long>
+)
+
+data class GroupWorkoutResult(
+    val startedAtEpochMs: Long,
+    val durationMs: Long,
+    val aborted: Boolean,
+    val participants: List<GroupParticipantWorkoutResult>
 )

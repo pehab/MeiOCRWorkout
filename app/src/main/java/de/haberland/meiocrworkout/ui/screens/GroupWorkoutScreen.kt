@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.haberland.meiocrworkout.R
 import de.haberland.meiocrworkout.domain.model.GroupAthletePlan
+import de.haberland.meiocrworkout.domain.model.GroupParticipantWorkoutResult
+import de.haberland.meiocrworkout.domain.model.GroupWorkoutResult
 import de.haberland.meiocrworkout.domain.model.GroupWorkoutSession
 import de.haberland.meiocrworkout.domain.model.WorkoutMode
 import de.haberland.meiocrworkout.domain.model.WorkoutRound
@@ -49,16 +51,21 @@ import kotlinx.coroutines.delay
 @Composable
 fun GroupWorkoutScreen(
     session: GroupWorkoutSession,
-    onFinish: () -> Unit,
+    onFinish: (GroupWorkoutResult) -> Unit,
 ) {
+    val startedAtEpochMs = remember { System.currentTimeMillis() }
     val started = remember { SystemClock.elapsedRealtime() }
     var now by remember { mutableLongStateOf(started) }
     var highlightedId by remember { mutableStateOf<Int?>(null) }
     val indices = remember { mutableStateMapOf<Int, Int>() }
+    val lastLapTimes = remember { mutableStateMapOf<Int, Long>() }
+    val laps = remember { mutableStateMapOf<Int, List<Long>>() }
     var showFinishDialog by remember { mutableStateOf(false) }
 
     session.athletes.forEach { athlete ->
         if (indices[athlete.id] == null) indices[athlete.id] = 0
+        if (lastLapTimes[athlete.id] == null) lastLapTimes[athlete.id] = started
+        if (laps[athlete.id] == null) laps[athlete.id] = emptyList()
     }
 
     LaunchedEffect(Unit) {
@@ -173,6 +180,11 @@ fun GroupWorkoutScreen(
                             }
                         ),
                         onClick = {
+                            val tapTime = SystemClock.elapsedRealtime()
+                            val lastLap = lastLapTimes[athlete.id] ?: started
+                            laps[athlete.id] = (laps[athlete.id] ?: emptyList()) + (tapTime - lastLap)
+                            lastLapTimes[athlete.id] = tapTime
+
                             val nextIndex = if (session.plan.isOpenEnded) {
                                 (current + 1) % athlete.rounds.size
                             } else {
@@ -202,7 +214,33 @@ fun GroupWorkoutScreen(
             title = { Text(stringResource(R.string.dialog_finish_group_title)) },
             text = { Text(stringResource(R.string.dialog_finish_group_text)) },
             confirmButton = {
-                TextButton(onClick = onFinish) {
+                TextButton(
+                    onClick = {
+                        val end = SystemClock.elapsedRealtime()
+                        val aborted = when {
+                            session.plan.mode == WorkoutMode.AMRAP_TIME -> !timeUp
+                            session.plan.mode == WorkoutMode.AMRAP_OPEN -> false
+                            else -> session.athletes.any { athlete ->
+                                (indices[athlete.id] ?: 0) < athlete.rounds.size
+                            }
+                        }
+                        onFinish(
+                            GroupWorkoutResult(
+                                startedAtEpochMs = startedAtEpochMs,
+                                durationMs = end - started,
+                                aborted = aborted,
+                                participants = session.athletes.map { athlete ->
+                                    GroupParticipantWorkoutResult(
+                                        athleteId = athlete.id,
+                                        name = athlete.name,
+                                        colorIndex = athlete.colorIndex,
+                                        lapTimes = laps[athlete.id] ?: emptyList(),
+                                    )
+                                },
+                            )
+                        )
+                    },
+                ) {
                     Text(stringResource(R.string.action_finish_caps))
                 }
             },
