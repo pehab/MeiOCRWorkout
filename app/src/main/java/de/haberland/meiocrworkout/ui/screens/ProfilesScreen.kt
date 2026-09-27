@@ -54,7 +54,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -74,7 +76,13 @@ fun ProfilesScreen(
     var showRenameDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
+    var showCommunityDialog by remember { mutableStateOf(false) }
+    var showPublishDialog by remember { mutableStateOf(false) }
     var profileMenu by remember { mutableStateOf(false) }
+
+    val communityViewModel: CommunityViewModel = viewModel()
+    val context = LocalContext.current
+    val activity = context.findActivity()
 
     val profile = profiles.firstOrNull { it.id == selectedProfileId } ?: profiles.first()
 
@@ -117,6 +125,57 @@ fun ProfilesScreen(
                 OutlinedButton(onClick = { showRenameDialog = true }, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.action_rename)) }
                 IconButton(onClick = { showDeleteDialog = true }, enabled = profiles.size > 1) {
                     Icon(Icons.Default.Delete, stringResource(R.string.cd_delete_profile))
+                }
+            }
+
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                OutlinedButton(
+                    onClick = {
+                        communityViewModel.refreshAll()
+                        showCommunityDialog = true
+                    },
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text(stringResource(R.string.action_discover_profiles))
+                }
+
+                if (communityViewModel.user == null) {
+                    OutlinedButton(
+                        onClick = { activity?.let(communityViewModel::signIn) },
+                        enabled = activity != null && !communityViewModel.loading,
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Text(stringResource(R.string.action_sign_in))
+                    }
+                } else {
+                    Button(
+                        onClick = { showPublishDialog = true },
+                        enabled = !communityViewModel.loading,
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Text(stringResource(R.string.action_publish_profile))
+                    }
+                }
+            }
+
+            communityViewModel.user?.let { user ->
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        stringResource(
+                            R.string.community_account_line,
+                            user.displayName.ifBlank { user.email },
+                        ),
+                        modifier = Modifier.weight(1f),
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    TextButton(onClick = communityViewModel::signOut) {
+                        Text(stringResource(R.string.action_sign_out))
+                    }
                 }
             }
         }
@@ -177,6 +236,57 @@ fun ProfilesScreen(
 
     if (showAboutDialog) {
         AboutDialog(onDismiss = { showAboutDialog = false })
+    }
+
+    if (showCommunityDialog) {
+        CommunityHubDialog(
+            profiles = communityViewModel.publishedProfiles,
+            ownSubmissions = communityViewModel.ownSubmissions,
+            pendingSubmissions = communityViewModel.pendingSubmissions,
+            user = communityViewModel.user,
+            loading = communityViewModel.loading,
+            onImport = { published ->
+                val imported = communityViewModel.importedCopy(published.profile)
+                onProfilesChanged(profiles + imported)
+                onProfileSelected(imported.id)
+                showCommunityDialog = false
+            },
+            onRefresh = communityViewModel::refreshAll,
+            onApprove = communityViewModel::approve,
+            onReject = communityViewModel::reject,
+            onSetModerator = communityViewModel::setModerator,
+            onBootstrapAdmin = communityViewModel::bootstrapAdmin,
+            onDismiss = { showCommunityDialog = false },
+        )
+    }
+
+    if (showPublishDialog) {
+        PublishProfileDialog(
+            profile = profile,
+            onSubmit = { description, location, tags ->
+                communityViewModel.submitProfile(
+                    profile = profile,
+                    description = description,
+                    location = location,
+                    tags = tags,
+                    onSubmitted = { showPublishDialog = false },
+                )
+            },
+            onDismiss = { showPublishDialog = false },
+        )
+    }
+
+    communityViewModel.errorMessage?.let { message ->
+        AlertDialog(
+            onDismissRequest = communityViewModel::clearError,
+            title = { Text(stringResource(R.string.community_error_title)) },
+            text = { Text(message) },
+            confirmButton = {
+                TextButton(onClick = communityViewModel::clearError) {
+                    Text(stringResource(R.string.action_ok))
+                }
+            },
+        )
     }
 
     if (showDeleteDialog) {
