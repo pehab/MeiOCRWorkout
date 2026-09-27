@@ -141,6 +141,14 @@
           }
         },
         {
+          "client_id": "66101709976-fjgnf3k5lqpeagn9e1s056f45790r2t7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.haberland.meiocrworkout",
+            "certificate_hash": "34549491eef8cf733370d07f50607c7d09403bfe"
+          }
+        },
+        {
           "client_id": "66101709976-vj5e359qe9nsvjj2vh95v609jkpu4sdm.apps.googleusercontent.com",
           "client_type": 3
         }
