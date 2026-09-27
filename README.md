@@ -1,4 +1,4 @@
-# MeiOCRWorkout – Alpha MVP 0.10
+# MeiOCRWorkout – Alpha 0.10.2
 
 Native Android app for configurable OCR workout simulation.
 
@@ -17,7 +17,7 @@ MeiOCRWorkout now ships with its own adaptive launcher icon: a dark OCR-rig fram
 
 ### Version display
 
-The Profile screen shows the current `versionName` and `versionCode` directly from `BuildConfig`. Current alpha: **0.10.0 (10)**.
+The Profile screen shows the current `versionName` and `versionCode` directly from `BuildConfig`. Current alpha: **0.10.2 (12)**.
 
 ### Google Play in-app update foundation
 
@@ -137,7 +137,7 @@ Details:
 
 ### Upgrade from MVP 0.5
 
-Was a one-time JSON-in-SharedPreferences → Room import for existing installs. Removed in 0.7: the app has never shipped, so there was no installed base and nothing left to migrate. `AppRepository.initialize()` now only seeds the default profile on first launch.
+The legacy JSON-in-SharedPreferences → Room import was removed in 0.7. `AppRepository.initialize()` now only seeds the default profile on first launch; legacy 0.5 data is not imported.
 
 Database version is currently **2**. Version 2 adds optional group-training metadata to workout history and ships with an explicit Room migration from version 1.
 
@@ -159,7 +159,7 @@ Group training extends the existing workout modes instead of replacing them. The
 
 For now: record the parallel activity on Garmin as **Trail Run**, just like an OCR race.
 
-MeiOCRWorkout stores exact session and round-change timestamps. A later FIT-import feature can align Garmin HR/pace/distance with the locally stored rounds without requiring live Garmin connectivity.
+MeiOCRWorkout stores the session start timestamp and per-round durations. A future FIT-import feature could use these to align Garmin HR/pace/distance with the locally stored rounds; FIT import and live Garmin connectivity are not implemented.
 
 ## Build
 
@@ -212,3 +212,24 @@ Der Kotlin-Code ist thematisch gegliedert:
 - `data/repository` – Repository-Interfaces und Implementierungen
 - `util` – allgemeine Formatierungs- und Android-Hilfen
 - Root-Package – App-Einstieg (`MainActivity`)
+
+## Verification and maintenance
+
+With JDK 17 and Android SDK 36 installed:
+
+```bash
+bash gradlew :app:testDebugUnitTest :app:assembleDebug
+bash gradlew :app:lintDebug
+```
+
+JVM tests cover session generation, formatting and the workout ViewModel using a fake repository. The current GitHub workflow runs unit tests and builds the APK; it does not run Android Lint or device tests. CI currently uses Gradle 9.5.0 while the bundled wrapper uses 9.5.1; these should be aligned in a separately verified build change.
+
+Google sign-in requires the fingerprints of the actual APK signing certificate in Firebase. Local debug, stable CI, upload and Google Play app-signing certificates can differ. Register the applicable SHA-1/SHA-256 fingerprints and download the updated `google-services.json`. Never commit private signing keys or passwords.
+
+The current obstacle model supports a name and a short `detail` string. Photos and an obstacle-detail popup during training are not implemented yet.
+
+Maintenance priorities: remove unused cross-layer wildcard imports; split large profile/community composables by responsibility; preserve coroutine cancellation in community error handling and test overlapping authentication/refresh operations. Room supports migration 1 → 2; downgrading to an older database version uses a destructive fallback.
+
+## Privacy
+
+See [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
