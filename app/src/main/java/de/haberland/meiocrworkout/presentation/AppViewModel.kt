@@ -122,7 +122,7 @@ class AppViewModel(
         val records = session.athletes.mapNotNull { athlete ->
             val participantResult = result.participants.firstOrNull { it.athleteId == athlete.id }
                 ?: return@mapNotNull null
-            if (participantResult.lapTimes.isEmpty()) return@mapNotNull null
+            if (athlete.rounds.isEmpty() || participantResult.lapTimes.isEmpty()) return@mapNotNull null
 
             val roundRecords = participantResult.lapTimes.mapIndexed { index, lapTime ->
                 val round = athlete.rounds[index % athlete.rounds.size]
@@ -170,11 +170,14 @@ class AppViewModel(
     }
 
     fun cancelWorkoutWithoutRounds() {
+        plan = null
+        groupSession = null
         appScreen = AppScreen.ROOT
     }
 
     fun finishWorkout(result: WorkoutResult) {
         val activePlan = plan ?: return
+        plan = null
         val completedRounds = activePlan.rounds.take(result.lapTimes.size)
         val roundRecords = completedRounds.mapIndexed { index, round ->
             WorkoutRoundRecord(

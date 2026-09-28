@@ -1,4 +1,4 @@
-# MeiOCRWorkout – Alpha 0.10.2
+# MeiOCRWorkout – Alpha 0.10.3
 
 Native Android app for configurable OCR workout simulation.
 
@@ -17,7 +17,7 @@ MeiOCRWorkout now ships with its own adaptive launcher icon: a dark OCR-rig fram
 
 ### Version display
 
-The Profile screen shows the current `versionName` and `versionCode` directly from `BuildConfig`. Current alpha: **0.10.2 (12)**.
+The Profile screen shows the current `versionName` and `versionCode` directly from `BuildConfig`. Current alpha: **0.10.3 (13)**.
 
 ### Google Play in-app update foundation
 
@@ -228,7 +228,7 @@ Google sign-in requires the fingerprints of the actual APK signing certificate i
 
 The current obstacle model supports a name and a short `detail` string. Photos and an obstacle-detail popup during training are not implemented yet.
 
-Maintenance priorities: remove unused cross-layer wildcard imports; split large profile/community composables by responsibility; preserve coroutine cancellation in community error handling and test overlapping authentication/refresh operations. Room supports migration 1 → 2; downgrading to an older database version uses a destructive fallback.
+Maintenance priorities: remove unused cross-layer wildcard imports; split large profile/community composables by responsibility; extend community integration tests against Firebase. Community requests now ignore duplicate actions while busy, preserve coroutine cancellation and cancel pending requests on sign-out; JVM tests cover delayed responses, cancellation and retry after failure. Repeated workout completion is ignored after the first result to prevent duplicate history records. Room supports migration 1 → 2; downgrading to an older database version uses a destructive fallback.
 
 ## Privacy
 

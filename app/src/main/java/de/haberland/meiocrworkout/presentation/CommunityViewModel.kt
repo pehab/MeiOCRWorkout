@@ -1,6 +1,9 @@
 package de.haberland.meiocrworkout.presentation
 
 import android.app.Activity
+import de.haberland.meiocrworkout.data.community.CommunityDataSource
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,7 +17,7 @@ import de.haberland.meiocrworkout.domain.model.WorkoutProfile
 import kotlinx.coroutines.launch
 
 class CommunityViewModel(
-    private val repository: CommunityRepository = CommunityRepository(),
+    private val repository: CommunityDataSource = CommunityRepository(),
 ) : ViewModel() {
 
     var user by mutableStateOf<CommunityUser?>(null)
@@ -35,13 +38,15 @@ class CommunityViewModel(
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
+    private var operation: Job? = null
+    private var generation = 0L
+
     init {
         refreshAll()
     }
 
     fun refreshAll() {
-        viewModelScope.launch {
-            loading = true
+        runOperation {
             runCatching {
                 user = repository.loadCurrentUser()
                 publishedProfiles = repository.loadPublishedProfiles()
@@ -52,25 +57,27 @@ class CommunityViewModel(
                     emptyList()
                 }
             }.onFailure(::showError)
-            loading = false
         }
     }
 
     fun signIn(activity: Activity) {
-        viewModelScope.launch {
-            loading = true
+        runOperation {
             runCatching {
                 user = repository.signInWithGoogle(activity)
                 ownSubmissions = repository.loadOwnSubmissions()
-                if (user?.role?.canModerate == true) {
-                    pendingSubmissions = repository.loadPendingSubmissions()
-                }
+                pendingSubmissions = if (user?.role?.canModerate == true) {
+                    repository.loadPendingSubmissions()
+                } else emptyList()
             }.onFailure(::showError)
-            loading = false
         }
     }
 
     fun signOut() {
+        generation++
+        operation?.cancel()
+        operation = null
+        loading = false
+        errorMessage = null
         repository.signOut()
         user = null
         ownSubmissions = emptyList()
@@ -84,48 +91,40 @@ class CommunityViewModel(
         tags: List<String>,
         onSubmitted: () -> Unit = {},
     ) {
-        viewModelScope.launch {
-            loading = true
+        runOperation {
             runCatching {
                 repository.submitProfile(profile, description, location, tags)
                 ownSubmissions = repository.loadOwnSubmissions()
             }.onSuccess {
                 onSubmitted()
             }.onFailure(::showError)
-            loading = false
         }
     }
 
     fun approve(submissionId: String) {
-        viewModelScope.launch {
-            loading = true
+        runOperation {
             runCatching {
                 repository.approveSubmission(submissionId)
                 pendingSubmissions = repository.loadPendingSubmissions()
                 publishedProfiles = repository.loadPublishedProfiles()
             }.onFailure(::showError)
-            loading = false
         }
     }
 
     fun reject(submissionId: String, note: String) {
-        viewModelScope.launch {
-            loading = true
+        runOperation {
             runCatching {
                 repository.rejectSubmission(submissionId, note)
                 pendingSubmissions = repository.loadPendingSubmissions()
             }.onFailure(::showError)
-            loading = false
         }
     }
 
     fun setModerator(email: String, enabled: Boolean) {
-        viewModelScope.launch {
-            loading = true
+        runOperation {
             runCatching {
                 repository.setModerator(email, enabled)
             }.onFailure(::showError)
-            loading = false
         }
     }
 
@@ -135,7 +134,23 @@ class CommunityViewModel(
         errorMessage = null
     }
 
+    private fun runOperation(block: suspend () -> Unit) {
+        // Ignore duplicate taps and refreshes while a request is in flight.
+        if (operation?.isActive == true) return
+        val startedGeneration = generation
+        operation = viewModelScope.launch {
+            loading = true
+            errorMessage = null
+            try {
+                block()
+            } finally {
+                if (generation == startedGeneration) loading = false
+            }
+        }
+    }
+
     private fun showError(error: Throwable) {
+        if (error is CancellationException) throw error
         errorMessage = error.message ?: error::class.java.simpleName
     }
 }

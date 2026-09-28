@@ -26,8 +26,8 @@ import kotlinx.coroutines.tasks.await
 class CommunityRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
-) {
-    suspend fun signInWithGoogle(activity: Activity): CommunityUser {
+) : CommunityDataSource {
+    override suspend fun signInWithGoogle(activity: Activity): CommunityUser {
         val request = GetCredentialRequest.Builder()
             .addCredentialOption(
                 GetGoogleIdOption.Builder()
@@ -51,11 +51,11 @@ class CommunityRepository(
         return requireNotNull(loadCurrentUser())
     }
 
-    fun signOut() {
+    override fun signOut() {
         auth.signOut()
     }
 
-    suspend fun loadCurrentUser(): CommunityUser? {
+    override suspend fun loadCurrentUser(): CommunityUser? {
         val user = auth.currentUser ?: return null
         upsertCommunityUser()
 
@@ -80,7 +80,7 @@ class CommunityRepository(
         )
     }
 
-    suspend fun loadPublishedProfiles(): List<CommunityProfile> =
+    override suspend fun loadPublishedProfiles(): List<CommunityProfile> =
         firestore.collection(PUBLISHED)
             .orderBy("updatedAt", Query.Direction.DESCENDING)
             .limit(500)
@@ -89,7 +89,7 @@ class CommunityRepository(
             .documents
             .mapNotNull(::toCommunityProfile)
 
-    suspend fun loadOwnSubmissions(): List<ProfileSubmission> {
+    override suspend fun loadOwnSubmissions(): List<ProfileSubmission> {
         val user = auth.currentUser ?: return emptyList()
         return firestore.collection(SUBMISSIONS)
             .whereEqualTo("ownerUid", user.uid)
@@ -101,7 +101,7 @@ class CommunityRepository(
             .mapNotNull(::toSubmission)
     }
 
-    suspend fun loadPendingSubmissions(): List<ProfileSubmission> =
+    override suspend fun loadPendingSubmissions(): List<ProfileSubmission> =
         firestore.collection(SUBMISSIONS)
             .whereEqualTo("status", "pending")
             .orderBy("submittedAt", Query.Direction.ASCENDING)
@@ -111,7 +111,7 @@ class CommunityRepository(
             .documents
             .mapNotNull(::toSubmission)
 
-    suspend fun submitProfile(
+    override suspend fun submitProfile(
         profile: WorkoutProfile,
         description: String,
         location: String,
@@ -135,7 +135,7 @@ class CommunityRepository(
         firestore.collection(SUBMISSIONS).add(data).await()
     }
 
-    suspend fun approveSubmission(submissionId: String) {
+    override suspend fun approveSubmission(submissionId: String) {
         val moderator = requireModerator()
         val submissionRef = firestore.collection(SUBMISSIONS).document(submissionId)
 
@@ -174,7 +174,7 @@ class CommunityRepository(
         }.await()
     }
 
-    suspend fun rejectSubmission(submissionId: String, note: String) {
+    override suspend fun rejectSubmission(submissionId: String, note: String) {
         val moderator = requireModerator()
         val ref = firestore.collection(SUBMISSIONS).document(submissionId)
 
@@ -195,7 +195,7 @@ class CommunityRepository(
         }.await()
     }
 
-    suspend fun setModerator(email: String, enabled: Boolean) {
+    override suspend fun setModerator(email: String, enabled: Boolean) {
         val admin = requireNotNull(loadCurrentUser())
         check(admin.role == CommunityRole.ADMIN) { "Adminrechte erforderlich." }
 
@@ -229,7 +229,7 @@ class CommunityRepository(
         }
     }
 
-    fun importCopy(source: WorkoutProfile): WorkoutProfile = source.copy(
+    override fun importCopy(source: WorkoutProfile): WorkoutProfile = source.copy(
         id = UUID.randomUUID().toString(),
         distances = source.distances.map { it.copy(id = UUID.randomUUID().toString()) },
         routeLoads = source.routeLoads.map { it.copy(id = UUID.randomUUID().toString()) },

@@ -170,6 +170,20 @@ class AppViewModelTest {
     }
 
     @Test
+    fun repeatedFinishDoesNotDuplicateHistory() = runTest(dispatcher) {
+        val repo = FakeWorkoutRepository()
+        val vm = viewModel(repo)
+        advanceUntilIdle()
+        vm.startWorkout(SessionGenerator.byRounds(AppRepository.defaultProfile(), 5, Random(1)))
+        val result = WorkoutResult(lapTimes = listOf(1000L), durationMs = 1000L, startedAtEpochMs = 0L, aborted = false)
+        vm.finishWorkout(result)
+        vm.finishWorkout(result)
+        advanceUntilIdle()
+        assertEquals(1, repo.loadHistory().size)
+        assertEquals(1, vm.history.size)
+    }
+
+    @Test
     fun finishWorkoutWithNoCompletedRoundsGoesStraightBackToRootWithoutTouchingHistory() = runTest(dispatcher) {
         val repo = FakeWorkoutRepository()
         val vm = viewModel(repo)
