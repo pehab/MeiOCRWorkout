@@ -7,7 +7,7 @@ MeiOCRWorkout does not use advertising or analytics and does not sell personal d
 
 Workout profiles, workout configuration, workout history, and optional group-training participant names/colors are stored locally on the user's device. Users may optionally use community features backed by Firebase.
 
-The application is intended to use Firebase Crashlytics to receive technical crash reports and diagnose app errors. Crash reports may contain technical information such as device and operating-system information, app version and state, stack traces, and diagnostic identifiers. Crashlytics is not used for advertising or analytics.
+The application uses Firebase Crashlytics to receive technical crash reports and diagnose app errors. Crash reports may contain technical information such as device and operating-system information, app version and state, stack traces, and diagnostic identifiers. Crashlytics is not used for advertising or analytics.
 
 Google may process technical information required to provide Firebase Crashlytics. For information about Google's handling of data, see Google's privacy policy and Firebase privacy and security documentation.
 
@@ -26,7 +26,7 @@ The application uses Google Play services for app-update functionality, Firebase
 Personal workout history is not sold or shared with third parties. Profiles are shared publicly only when the user explicitly submits them and they are approved by moderation. Account/profile-submission metadata, community role information, and technical crash information may be processed by Google/Firebase to provide the requested services.
 
 ## Data deletion
-Locally stored workout data can be deleted using the application's available deletion functions, by clearing the app data, or by uninstalling the application. Community submissions/publications are separate cloud records; deletion/withdrawal controls can be added as the community feature evolves.
+Locally stored workout data can be deleted using the application's available deletion functions, by clearing the app data, or by uninstalling the application. Community submissions and publications are separate cloud records. Questions or requests concerning removal of cloud community data can be sent to the contact address below.
 
 ## Security
 Reasonable technical measures are used to protect data. No method of electronic storage or transmission can guarantee absolute security.
