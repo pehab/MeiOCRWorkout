@@ -1,4 +1,11 @@
-# MeiOCRWorkout – Alpha 0.10.3
+# MeiOCRWorkout – Alpha 0.10.4
+
+## Security update 0.10.4
+
+Community documents are decoded with explicit type and collection-size validation; malformed rows are skipped individually. The moderator approval transaction validates the target namespace and the existing published profile owner before writing, then publishes only normalized profile fields. Regression tests cover foreign targets, malformed rows, numeric overflow and owner changes.
+
+These client checks protect updated app builds. Server-side Firestore schema/ownership rules still need a separate deployment; old or modified clients are not secured by this update alone. Firebase rules have not been changed or deployed.
+
 
 Native Android app for configurable OCR workout simulation.
 

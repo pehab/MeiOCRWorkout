@@ -49,8 +49,8 @@ android {
         applicationId = "de.haberland.meiocrworkout"
         minSdk = 28
         targetSdk = 36
-        versionCode = 13
-        versionName = "0.10.3"
+        versionCode = 14
+        versionName = "0.10.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

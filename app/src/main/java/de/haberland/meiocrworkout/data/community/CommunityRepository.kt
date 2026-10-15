@@ -16,7 +16,6 @@ import de.haberland.meiocrworkout.R
 import de.haberland.meiocrworkout.domain.model.CommunityProfile
 import de.haberland.meiocrworkout.domain.model.CommunityRole
 import de.haberland.meiocrworkout.domain.model.CommunityUser
-import de.haberland.meiocrworkout.domain.model.DistanceOption
 import de.haberland.meiocrworkout.domain.model.ProfileSubmission
 import de.haberland.meiocrworkout.domain.model.WeightedItem
 import de.haberland.meiocrworkout.domain.model.WorkoutProfile
@@ -119,6 +118,7 @@ class CommunityRepository(
     ) {
         val user = auth.currentUser ?: error("Für das Veröffentlichen ist eine Anmeldung nötig.")
         val targetProfileId = "${user.uid}_${profile.id}"
+        CommunityDocuments.requireOwnedTarget(user.uid, targetProfileId)
         val data = mapOf<String, Any?>(
             "targetProfileId" to targetProfileId,
             "ownerUid" to user.uid,
@@ -132,6 +132,9 @@ class CommunityRepository(
             "formatVersion" to 1,
             "profile" to profile.toFirestoreMap(),
         )
+        requireNotNull(CommunityDocuments.submission("new", data, 0L)) {
+            "Das Profil enthält ungültige oder zu große Felder."
+        }
         firestore.collection(SUBMISSIONS).add(data).await()
     }
 
@@ -144,18 +147,20 @@ class CommunityRepository(
             check(snapshot.exists()) { "Einreichung nicht gefunden." }
             check(snapshot.getString("status") == "pending") { "Die Einreichung ist nicht mehr offen." }
 
-            val targetProfileId = snapshot.getString("targetProfileId").orEmpty()
-            check(targetProfileId.isNotBlank()) { "Zielprofil fehlt." }
-
-            val publishedRef = firestore.collection(PUBLISHED).document(targetProfileId)
+            val submission = requireNotNull(toSubmission(snapshot)) { "Die Einreichung enthält ungültige Daten." }
+            val publishedRef = firestore.collection(PUBLISHED).document(submission.targetProfileId)
+            val existing = transaction.get(publishedRef)
+            CommunityDocuments.requirePublishOwner(
+                submission.ownerUid, submission.targetProfileId, existing.exists(), existing.get("ownerUid"),
+            )
             val published = mapOf<String, Any?>(
-                "ownerUid" to snapshot.getString("ownerUid").orEmpty(),
-                "creatorName" to snapshot.getString("creatorName").orEmpty(),
-                "description" to snapshot.getString("description").orEmpty(),
-                "location" to snapshot.getString("location").orEmpty(),
-                "tags" to snapshot.get("tags").asStringList(),
-                "formatVersion" to ((snapshot.getLong("formatVersion") ?: 1L).toInt()),
-                "profile" to snapshot.get("profile"),
+                "ownerUid" to submission.ownerUid,
+                "creatorName" to submission.creatorName,
+                "description" to submission.description,
+                "location" to submission.location,
+                "tags" to submission.tags,
+                "formatVersion" to 1,
+                "profile" to submission.profile.toFirestoreMap(),
                 "updatedAt" to Timestamp.now(),
                 "approvedBy" to moderator.uid,
                 "sourceSubmissionId" to submissionId,
@@ -280,72 +285,16 @@ class CommunityRepository(
     )
 
     private fun toCommunityProfile(doc: DocumentSnapshot): CommunityProfile? {
-        val profile = doc.get("profile").asStringMap()?.toWorkoutProfile() ?: return null
-        return CommunityProfile(
-            id = doc.id,
-            profile = profile,
-            description = doc.getString("description").orEmpty(),
-            location = doc.getString("location").orEmpty(),
-            tags = doc.get("tags").asStringList(),
-            creatorName = doc.getString("creatorName").orEmpty(),
-            ownerUid = doc.getString("ownerUid").orEmpty(),
-            updatedAtEpochMs = doc.getTimestamp("updatedAt")?.toDate()?.time ?: 0L,
-        )
+        val data = doc.data ?: return null
+        val updatedAt = (data["updatedAt"] as? Timestamp)?.toDate()?.time ?: return null
+        return CommunityDocuments.published(doc.id, data, updatedAt)
     }
 
     private fun toSubmission(doc: DocumentSnapshot): ProfileSubmission? {
-        val profile = doc.get("profile").asStringMap()?.toWorkoutProfile() ?: return null
-        return ProfileSubmission(
-            id = doc.id,
-            targetProfileId = doc.getString("targetProfileId").orEmpty(),
-            profile = profile,
-            description = doc.getString("description").orEmpty(),
-            location = doc.getString("location").orEmpty(),
-            tags = doc.get("tags").asStringList(),
-            creatorName = doc.getString("creatorName").orEmpty(),
-            ownerUid = doc.getString("ownerUid").orEmpty(),
-            ownerEmail = doc.getString("ownerEmail").orEmpty(),
-            submittedAtEpochMs = doc.getTimestamp("submittedAt")?.toDate()?.time ?: 0L,
-            status = doc.getString("status").orEmpty(),
-            moderatorNote = doc.getString("moderatorNote").orEmpty(),
-        )
+        val data = doc.data ?: return null
+        val submittedAt = (data["submittedAt"] as? Timestamp)?.toDate()?.time ?: return null
+        return CommunityDocuments.submission(doc.id, data, submittedAt)
     }
-
-    private fun Map<String, Any?>.toWorkoutProfile(): WorkoutProfile {
-        val distances = this["distances"].asMapList().map { item ->
-            DistanceOption(
-                meters = (item["meters"] as? Number)?.toInt() ?: 0,
-                weight = (item["weight"] as? Number)?.toInt() ?: 1,
-                enabled = item["enabled"] as? Boolean ?: true,
-            )
-        }
-        val routeLoads = this["routeLoads"].asMapList().map { it.toWeightedItem() }
-        val obstacles = this["obstacles"].asMapList().map { it.toWeightedItem() }
-        return WorkoutProfile(
-            name = this["name"] as? String ?: "Community-Profil",
-            distances = distances,
-            routeLoads = routeLoads,
-            obstacles = obstacles,
-        )
-    }
-
-    private fun Map<String, Any?>.toWeightedItem() = WeightedItem(
-        name = this["name"] as? String ?: "",
-        weight = (this["weight"] as? Number)?.toInt() ?: 1,
-        enabled = this["enabled"] as? Boolean ?: true,
-        detail = this["detail"] as? String ?: "",
-        isNone = this["isNone"] as? Boolean ?: false,
-    )
-
-    @Suppress("UNCHECKED_CAST")
-    private fun Any?.asStringMap(): Map<String, Any?>? = this as? Map<String, Any?>
-
-    @Suppress("UNCHECKED_CAST")
-    private fun Any?.asMapList(): List<Map<String, Any?>> =
-        (this as? List<*>)?.mapNotNull { it as? Map<String, Any?> }.orEmpty()
-
-    private fun Any?.asStringList(): List<String> =
-        (this as? List<*>)?.mapNotNull { it as? String }.orEmpty()
 
     companion object {
         private const val PUBLISHED = "published_profiles"
