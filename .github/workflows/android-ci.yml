@@ -12,6 +12,8 @@ permissions:
 
 jobs:
   build:
+    outputs:
+      githubSigningReady: ${{ steps.githubSigning.outputs.ready }}
     name: Test and build debug APK
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -26,6 +28,14 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      - name: Verify update routing and APK metadata contract
+        run: bash scripts/test-update-contract.sh
+      - name: Configure existing GitHub APK signing identity
+        id: githubSigning
+        env:
+          MEI_SIGNING_JSON: ${{ secrets.MEI_SIGNING_JSON }}
+          EXISTING_SIGNING_READY: ${{ secrets.MEIOCR_SIGNING_KEYSTORE_BASE64 != '' && secrets.MEIOCR_SIGNING_STORE_PASSWORD != '' && secrets.MEIOCR_SIGNING_KEY_ALIAS != '' }}
+        run: python3 .github/scripts/setup-github-signing.py
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
         with:
@@ -69,6 +79,25 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: MeiOCRWorkout-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            app/build/outputs/apk/debug/output-metadata.json
           if-no-files-found: error
           retention-days: 14
+
+  github-updates:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build.outputs.githubSigningReady == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Download tested signed APK
+        run: gh run download "$GITHUB_RUN_ID" --name MeiOCRWorkout-debug --dir apk
+      - name: Publish immutable APK and verified update manifest
+        run: python3 .github/scripts/publish-github-update.py

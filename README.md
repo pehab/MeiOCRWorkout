@@ -240,3 +240,7 @@ Maintenance priorities: remove unused cross-layer wildcard imports; split large 
 ## Privacy
 
 See [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
+
+## Updatequelle
+
+Updates folgen der tatsächlichen Installationsquelle: Google Play für Play-Installationen, GitHub für direkt installierte APKs. [Bedienung, Signierung und Veröffentlichung](docs/UPDATES.md).

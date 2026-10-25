@@ -309,6 +309,7 @@ fun ProfilesScreen(
 
 @Composable
 private fun AboutDialog(onDismiss: () -> Unit) {
+    val updateContext = LocalContext.current
     val uriHandler = LocalUriHandler.current
 
     AlertDialog(
@@ -345,6 +346,11 @@ private fun AboutDialog(onDismiss: () -> Unit) {
                     fontSize = 13.sp
                 )
             }
+        },
+        dismissButton = {
+            TextButton(onClick = {
+                de.meiapps.updates.GitHubUpdates.showSettings(updateContext, "pehab/MeiOCRWorkout")
+            }) { Text("App-Updates") }
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
